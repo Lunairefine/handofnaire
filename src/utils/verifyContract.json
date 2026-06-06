@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Opensea",
+    "address": "0x00005ea00ac477b1030ce78506496e8c2de24bf5",
+    "color": "text-blue-400"
+  },
+  {
+    "name": "UniswapLP",
+    "address": "0xc36442b4a4522e871399cd717abdd847ab11fe88",
+    "color": "text-pink-500"
+  },
+  {
+    "name": "SupernovaLP",
+    "address": "0x00d5bbd0fe275efee371a2b34d0a4b95b0c8aaaa",
+    "color": "text-purple-500"
+  }
+]
