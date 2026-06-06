@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useMemo } from 'react';
-import { chains } from '../lib/chains';
-import SearchBar from './SearchBar';
-import ChainCard from './ChainCard';
+import { chains } from '@/app/nairerpc/lib/chains';
+import SearchBar from '@/app/nairerpc/components/SearchBar';
+import ChainCard from '@/app/nairerpc/components/ChainCard';
 
 export default function HomeContent() {
   const [searchTerm, setSearchTerm] = useState("");

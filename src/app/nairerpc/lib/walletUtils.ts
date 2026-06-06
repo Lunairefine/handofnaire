@@ -1,4 +1,4 @@
-import { ChainData } from '../types';
+import { ChainData } from '@/app/nairerpc/types';
 
 declare global {
   interface Window {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Activity, ShieldAlert, Cpu, Layers } from 'lucide-react';
-import { useAppContext } from '../../components/AppContext';
+import { useAppContext } from '@/app/components/AppContext';
 
 interface ScannerStatsProps {
   latestBlock: number;

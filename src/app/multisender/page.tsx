@@ -1,6 +1,6 @@
 'use client';
 
-import Multisender from './components/Multisender';
+import Multisender from '@/app/multisender/components/Multisender';
 
 export default function MultisenderPage() {
   return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { MintTransaction } from '../../../types';
-import { shortenAddress, shortenHash, formatTime, getKnownContract } from '../../../utils/format';
+import { MintTransaction } from '@/types';
+import { shortenAddress, shortenHash, formatTime, getKnownContract } from '@/utils/format';
 import { Eye, Trash2, Shield, User, Globe, Coins, Flame, ExternalLink } from 'lucide-react';
 
 interface LiveFeedProps {

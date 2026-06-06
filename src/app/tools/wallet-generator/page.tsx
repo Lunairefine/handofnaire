@@ -1,4 +1,4 @@
-import WalletGenerator from '@/components/tools/WalletGenerator'
+import WalletGenerator from '@/app/walletgenerator/components/WalletGenerator'
 
 export default function WalletGeneratorPage() {
   return <WalletGenerator />

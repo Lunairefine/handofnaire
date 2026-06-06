@@ -1,9 +1,9 @@
 "use client";
 
 import { Copy, PlusCircle, Activity } from 'lucide-react';
-import { ChainData } from '../types';
-import { useRPCScanner } from '../hooks/useRPCScanner';
-import { addNetworkToWallet } from '../lib/walletUtils';
+import { ChainData } from '@/app/nairerpc/types';
+import { useRPCScanner } from '@/app/nairerpc/hooks/useRPCScanner';
+import { addNetworkToWallet } from '@/app/nairerpc/lib/walletUtils';
 
 export default function ChainCard({ chain }: { chain: ChainData }) {
   const { results, loading, scan } = useRPCScanner(chain.rpcUrls);

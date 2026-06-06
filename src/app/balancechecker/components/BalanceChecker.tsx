@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import BalanceInput from './BalanceInput'
-import BalanceControls from './BalanceControls'
-import BalanceTable from './BalanceTable'
+import BalanceInput from '@/app/balancechecker/components/BalanceInput'
+import BalanceControls from '@/app/balancechecker/components/BalanceControls'
+import BalanceTable from '@/app/balancechecker/components/BalanceTable'
 import { getBalances, BalanceResult } from '@/lib/balance'
 
 export default function BalanceChecker() {

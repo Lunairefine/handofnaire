@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import MultisenderType, { SenderType } from './MultisenderType'
-import MultisenderForm from './MultisenderForm'
-import MultisenderControls from './MultisenderControls'
-import MultisenderTable from './MultisenderTable'
-import { TxData, sendNative, delay } from '@/lib/multisender'
+import MultisenderType, { SenderType } from '@/app/multisender/components/MultisenderType'
+import MultisenderForm from '@/app/multisender/components/MultisenderForm'
+import MultisenderControls from '@/app/multisender/components/MultisenderControls'
+import MultisenderTable from '@/app/multisender/components/MultisenderTable'
+import { multisend, RecipientData } from '@/lib/multisender'
 import { CHAINS } from '@/lib/chains'
 import { privateKeyToAccount } from 'viem/accounts'
 

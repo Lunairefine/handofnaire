@@ -1,6 +1,6 @@
 'use client'
 
-import { SenderType } from './MultisenderType'
+import { SenderType } from '@/app/multisender/components/MultisenderType'
 
 interface MultisenderFormProps {
   type: SenderType

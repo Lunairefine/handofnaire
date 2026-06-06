@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { ContractMetadata } from '../types';
+import { ContractMetadata } from '@/types';
 
 
 const ERC721_ABI = [
@@ -30,7 +30,7 @@ export async function getContractMetadata(
   address: string, 
   mintPrice: string = '0.05'
 ): Promise<ContractMetadata> {
-  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://rpc.ankr.com/eth';
+  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
   
   // Setup standard guesses
   const seed = parseInt(address.slice(2, 8), 16) || 0;

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { checkRPC } from '../lib/rpcUtils';
-import { RPCResult } from '../types';
+import { checkRPC } from '@/app/nairerpc/lib/rpcUtils';
+import { RPCResult } from '@/app/nairerpc/types';
 export const useRPCScanner = (rpcUrls: string[]) => {
   const [results, setResults] = useState<RPCResult[]>([]);
   const [loading, setLoading] = useState(false);

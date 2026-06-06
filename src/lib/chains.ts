@@ -4,22 +4,22 @@ import { mainnet, optimism, bsc, base as baseChain } from 'viem/chains'
 export const CHAINS = {
   eth: {
     name: 'Ethereum',
-    rpc: 'https://rpc.ankr.com/eth',
+    rpc: 'https://ethereum-rpc.publicnode.com',
     chain: mainnet
   },
   op: {
     name: 'Optimism',
-    rpc: 'https://mainnet.optimism.io',
+    rpc: 'https://optimism-rpc.publicnode.com',
     chain: optimism
   },
   bsc: {
     name: 'BSC',
-    rpc: 'https://bsc-dataseed.binance.org',
+    rpc: 'https://bsc-rpc.publicnode.com',
     chain: bsc
   },
   base: {
     name: 'Base',
-    rpc: 'https://mainnet.base.org',
+    rpc: 'https://base-rpc.publicnode.com',
     chain: baseChain
   }
 }
@@ -27,19 +27,19 @@ export const CHAINS = {
 export const clients = {
   eth: createPublicClient({
     chain: mainnet,
-    transport: http('https://rpc.ankr.com/eth')
+    transport: http('https://ethereum-rpc.publicnode.com')
   }),
   op: createPublicClient({
     chain: optimism,
-    transport: http('https://mainnet.optimism.io')
+    transport: http('https://optimism-rpc.publicnode.com')
   }),
   bsc: createPublicClient({
     chain: bsc,
-    transport: http('https://rpc.ankr.com/bsc')
+    transport: http('https://bsc-rpc.publicnode.com')
   }),
   base: createPublicClient({
     chain: baseChain,
-    transport: http('https://mainnet.base.org')
+    transport: http('https://base-rpc.publicnode.com')
   }),
   hyperevm: createPublicClient({
     chain: {

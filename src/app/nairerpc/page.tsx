@@ -1,6 +1,6 @@
 'use client';
 
-import HomeContent from './components/HomeContent';
+import HomeContent from '@/app/nairerpc/components/HomeContent';
 
 export default function NairerpcPage() {
   return (

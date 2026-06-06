@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ethers } from 'ethers';
-import { MintTransaction } from '../types';
-import { detectMintFunction, analyzeMintType } from '../parser/abi';
-import { useAppContext } from '../app/components/AppContext';
+import { MintTransaction } from '@/types';
+import { detectMintFunction, analyzeMintType } from '@/parser/abi';
+import { useAppContext } from '@/app/components/AppContext';
 
 export function useMintScanner(mode: string = 'ERC721') {
   const { isScanning } = useAppContext();
@@ -28,7 +28,7 @@ export function useMintScanner(mode: string = 'ERC721') {
 
     if (isScanning) {
       setTimeout(() => setStatus(`Connecting to Ethereum Mainnet (${mode})...`), 0);
-      const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://rpc.ankr.com/eth';
+      const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
       const provider = new ethers.JsonRpcProvider(rpcUrl, undefined, { staticNetwork: true });
 
       const pollBlock = async () => {

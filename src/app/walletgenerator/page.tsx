@@ -1,6 +1,6 @@
 'use client';
 
-import WalletGenerator from './components/WalletGenerator';
+import WalletGenerator from '@/app/walletgenerator/components/WalletGenerator';
 
 export default function WalletGeneratorPage() {
   return (

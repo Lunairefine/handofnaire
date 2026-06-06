@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import WalletControls from './WalletControls'
-import WalletTable from './WalletTable'
+import WalletControls from '@/app/walletgenerator/components/WalletControls'
+import WalletTable from '@/app/walletgenerator/components/WalletTable'
 import { WalletData, generateWallet, vanityGenerator } from '@/lib/wallet'
 import { downloadTxt } from '@/lib/utils'
 

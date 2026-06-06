@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ContractMetadata, MintTransaction } from '../../../types';
-import { shortenAddress, shortenHash, getKnownContract } from '../../../utils/format';
+import { ContractMetadata, MintTransaction } from '@/types';
+import { shortenAddress, shortenHash, getKnownContract } from '@/utils/format';
 import { ExternalLink, Compass, Zap, Copy, Check, Hash, Coins, Terminal } from 'lucide-react';
 
 interface ContractDetailsProps {

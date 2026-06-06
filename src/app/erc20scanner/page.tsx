@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useMintScanner } from '../../hooks/useMintScanner';
-import { getContractMetadata } from '../../services/rpc';
-import { getContractSourceCode } from '../../services/blockExplorer';
-import { extractSolidityFunction } from '../../parser/solidity';
-import { ContractMetadata, MintTransaction } from '../../types';
-import ScannerStats from './components/ScannerStats';
-import LiveFeed from './components/LiveFeed';
-import ContractDetails from './components/ContractDetails';
-import CodeViewer from './components/CodeViewer';
+import { useMintScanner } from '@/hooks/useMintScanner';
+import { getContractMetadata } from '@/services/rpc';
+import { getContractSourceCode } from '@/services/blockExplorer';
+import { extractSolidityFunction } from '@/parser/solidity';
+import { ContractMetadata, MintTransaction } from '@/types';
+import ScannerStats from '@/app/erc20scanner/components/ScannerStats';
+import LiveFeed from '@/app/erc20scanner/components/LiveFeed';
+import ContractDetails from '@/app/erc20scanner/components/ContractDetails';
+import CodeViewer from '@/app/erc20scanner/components/CodeViewer';
 
 export default function ERC20ScannerPage() {
   const {
