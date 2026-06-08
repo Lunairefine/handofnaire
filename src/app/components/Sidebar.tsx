@@ -19,7 +19,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {}
       {isMobileMenuOpen && (
         <div 
           className="fixed inset-0 top-[52px] bg-black/50 z-40 md:hidden backdrop-blur-sm"
@@ -27,7 +27,7 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Sidebar */}
+      {}
       <aside 
         className={`fixed inset-y-0 left-0 top-[52px] w-64 bg-[var(--bg-surface)] border-r border-[var(--border-color)] flex flex-col z-40 transform transition-transform duration-300 ease-in-out md:translate-x-0 ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'

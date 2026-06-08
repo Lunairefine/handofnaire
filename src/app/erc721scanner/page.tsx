@@ -32,7 +32,6 @@ export default function ERC721ScannerPage() {
   const [isLoadingMetadata, setIsLoadingMetadata] = useState<boolean>(false);
   const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
 
-  // Fetch contract data when an address is clicked
   const handleSelectContract = async (tx: MintTransaction) => {
     setSelectedTx(tx);
     const address = tx.contractAddress;

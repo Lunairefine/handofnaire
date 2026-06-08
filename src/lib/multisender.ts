@@ -45,5 +45,4 @@ export async function sendNative({
   })
 }
 
-// Helpers to delay for rate limiting
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))

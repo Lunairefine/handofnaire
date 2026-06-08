@@ -8,6 +8,7 @@ import {
   isValidAddress,
 } from "@/app/portfolio/lib/holdings";
 import { type BlockscoutTransaction } from "@/app/portfolio/lib/blockscout";
+import { useAppContext } from "@/app/components/AppContext";
 
 type AddressFlowPanelProps = {
   address: string;
@@ -32,6 +33,7 @@ const getEtherscanTxUrl = (hash?: string) =>
   hash ? `https://etherscan.io/tx/${hash}` : null;
 
 export default function AddressFlowPanel({ address, isActive }: AddressFlowPanelProps) {
+  const { theme } = useAppContext();
   const [transactions, setTransactions] = useState<BlockscoutTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,24 +143,20 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const getAvatar = (party: any) => {
           const partyHash = party?.hash?.toLowerCase();
-          const userAddressLower = address.toLowerCase();
-          const isUser = partyHash === userAddressLower;
           
           const name = party?.ens_domain_name || party?.name || party?.hash || "?";
           const char = name.replace(/^0x/i, "").charAt(0).toUpperCase();
           const ensName = party?.ens_domain_name;
           
-          // Primary: ENS Avatar for user
-          let avatarUrl = isUser && ensName 
+          let avatarUrl = ensName 
             ? `https://metadata.ens.domains/mainnet/avatar/${encodeURIComponent(ensName)}`
             : null;
 
-          // For non-users, use syntax images
-          if (!isUser && partyHash) {
-            // Simple deterministic choice based on hash
+          if (!avatarUrl && partyHash) {
             const charSum = partyHash.split('').reduce((sum: number, c: string) => sum + c.charCodeAt(0), 0);
-            const imageIndex = (charSum % 5) + 1; // We have syntax1.png to syntax5.png
-            avatarUrl = `/media/syntax${imageIndex}.png`;
+            const imageIndex = (charSum % 4) + 1; 
+            const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+            avatarUrl = `/media/syntax/${bgPrefix}${imageIndex}.png`;
           }
 
           return (
@@ -169,11 +167,14 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
                   alt="" 
                   className="absolute inset-0 h-full w-full object-cover z-10"
                   onError={(e) => {
-                    if (!isUser) {
-                       // If syntax image fails (though it shouldn't), hide and show char
-                       e.currentTarget.style.display = 'none';
+                    if (partyHash && e.currentTarget.dataset.syntaxFallbackApplied !== "true") {
+                      e.currentTarget.dataset.syntaxFallbackApplied = "true";
+                      const charSum = partyHash.split('').reduce((sum: number, c: string) => sum + c.charCodeAt(0), 0);
+                      const imageIndex = (charSum % 4) + 1;
+                      const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+                      e.currentTarget.src = `/media/syntax/${bgPrefix}${imageIndex}.png`;
                     } else {
-                       e.currentTarget.style.display = 'none';
+                      e.currentTarget.style.display = 'none';
                     }
                   }}
                 />
@@ -186,20 +187,20 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
         const transactionCard = (
           <div className="flex items-center justify-between py-4 transition hover:bg-foreground/[0.02] gap-4">
             <div className="flex items-center gap-2 overflow-hidden flex-1">
-              {/* Source */}
+              {}
               {getAvatar(source)}
               <span className="text-[13px] font-medium text-foreground truncate max-w-[80px] sm:max-w-[120px]">
                 {source?.ens_domain_name || source?.name || "Unknown"}
               </span>
 
-              {/* Action/Function */}
+              {}
               <div className="flex items-center gap-1.5 px-0 py-0.5">
                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider whitespace-nowrap">
                   {transaction.method || (isOutgoing ? "Send" : "Receive")}
                 </span>
               </div>
 
-              {/* Target */}
+              {}
               {getAvatar(target)}
               <span className="text-[13px] font-medium text-foreground truncate max-w-[80px] sm:max-w-[120px]">
                 {target?.ens_domain_name || target?.name || "Unknown"}

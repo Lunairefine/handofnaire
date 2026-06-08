@@ -40,7 +40,6 @@ export const vanityGenerator = async (
     attempts++
     if (attempts % 100 === 0 && onProgress) {
       onProgress(attempts)
-      // Allow UI to breathe
       await new Promise(resolve => setTimeout(resolve, 0))
     }
 
@@ -49,9 +48,6 @@ export const vanityGenerator = async (
     
     const checkAddress = isCaseSensitive ? address : address.toLowerCase()
     
-    // Remove 0x for checking if prefix doesn't start with it, 
-    // but usually vanity prefix includes the 0x or is after it.
-    // Let's assume the user provides the part AFTER 0x or the whole thing.
     
     const addressWithout0x = checkAddress.slice(2)
     const prefixWithout0x = targetPrefix.startsWith('0x') ? targetPrefix.slice(2) : targetPrefix

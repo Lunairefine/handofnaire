@@ -22,7 +22,6 @@ export default function AddressRewardsPanel({
     
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
-    // Placeholder for future rewards fetching logic
     const timer = setTimeout(() => {
       setIsLoading(false);
       setHasFetched(true);

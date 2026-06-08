@@ -6,7 +6,7 @@ import { useRPCScanner } from '@/app/nairerpc/hooks/useRPCScanner';
 import { addNetworkToWallet } from '@/app/nairerpc/lib/walletUtils';
 
 export default function ChainCard({ chain }: { chain: ChainData }) {
-  const { results, loading, scan } = useRPCScanner(chain.rpcUrls);
+  const { results } = useRPCScanner(chain.rpcUrls);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);

@@ -73,7 +73,7 @@ export default function WalletTable({ wallets }: WalletTableProps) {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  {/* Additional actions if needed */}
+                  {}
                 </td>
               </tr>
             ))}

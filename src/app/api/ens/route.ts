@@ -32,7 +32,7 @@ const withTimeout = async <T,>(promise: Promise<T>, timeoutMs: number) => {
   }
 };
 
-const normalizeUrl = (url: string | null, name: string) => {
+const normalizeUrl = (url: string | null) => {
   if (!url) {
     return null;
   }
@@ -67,25 +67,35 @@ export async function GET(request: Request) {
   }
 
   try {
+    const apiBaseUrl = process.env.BLOCKSCOUT_API_BASE_URL || "https://eth.blockscout.com";
+    const chainId = process.env.BLOCKSCOUT_CHAIN_ID || "1";
     const apiKey = process.env.BLOCKSCOUT_API_KEY || "";
-    const addressUrl = `${process.env.BLOCKSCOUT_API_BASE_URL}/${process.env.BLOCKSCOUT_CHAIN_ID}/api/v2/addresses/${address}`;
+
+    const basePath = process.env.BLOCKSCOUT_API_BASE_URL ? `${apiBaseUrl}/${chainId}` : apiBaseUrl;
+    const addressUrl = `${basePath}/api/v2/addresses/${address}`;
     
     const [rawEnsName, addressInfoRes] = await Promise.all([
-      getEnsName(client, { address: address as Address }),
-      fetch(`${addressUrl}${apiKey ? `?apikey=${apiKey}` : ""}`, { cache: "no-store" })
+      withTimeout(
+        getEnsName(client, { address: address as Address }),
+        ENS_TIMEOUT_MS
+      ).catch(() => null),
+      fetch(`${addressUrl}${apiKey ? `?apikey=${apiKey}` : ""}`, { cache: "no-store" }).catch(() => null)
     ]);
 
     let addressType: "EOA" | "CONTRACT" = "EOA";
     let isVerified = false;
+    let blockscoutEnsName: string | null = null;
 
-    if (addressInfoRes.ok) {
+    if (addressInfoRes && addressInfoRes.ok) {
       const info = await addressInfoRes.json();
-      // Blockscout v2 typically uses "is_contract" and "is_verified"
       addressType = info.is_contract ? "CONTRACT" : "EOA";
       isVerified = !!info.is_verified;
+      blockscoutEnsName = info.ens_domain_name || null;
     }
 
-    if (!rawEnsName) {
+    const finalEnsName = rawEnsName || blockscoutEnsName;
+
+    if (!finalEnsName) {
       return NextResponse.json({
         ensName: null,
         ensAvatar: null,
@@ -95,38 +105,43 @@ export async function GET(request: Request) {
       });
     }
 
-    const normalizedEnsName = normalize(rawEnsName);
+    const normalizedEnsName = normalize(finalEnsName);
     let ensAvatar: string | null = null;
     let ensBanner: string | null = null;
 
     try {
-      const [resolvedAvatar, resolvedBanner] = await Promise.all([
-        withTimeout(
-          getEnsAvatar(client, {
-            name: normalizedEnsName,
-          }),
-          ENS_TIMEOUT_MS
-        ),
-        withTimeout(
-          getEnsText(client, {
-            name: normalizedEnsName,
-            key: "header", // Standard ENS header/banner key
-          }),
-          ENS_TIMEOUT_MS
-        ).then(res => res || withTimeout(
-          getEnsText(client, {
-            name: normalizedEnsName,
-            key: "banner",
-          }),
-          ENS_TIMEOUT_MS
-        ))
-      ]);
+      const resolvedAvatar = await withTimeout(
+        getEnsAvatar(client, {
+          name: normalizedEnsName,
+        }),
+        ENS_TIMEOUT_MS
+      ).catch(() => null);
 
-      ensAvatar = normalizeUrl(resolvedAvatar, normalizedEnsName) || 
-                  (resolvedAvatar ? buildMetadataAvatarUrl(normalizedEnsName) : null);
-      ensBanner = normalizeUrl(resolvedBanner, normalizedEnsName);
+      ensAvatar = normalizeUrl(resolvedAvatar);
     } catch {
-      // Silently fail records fetch
+    }
+
+    if (!ensAvatar) {
+      ensAvatar = buildMetadataAvatarUrl(normalizedEnsName);
+    }
+
+    try {
+      const resolvedBanner = await withTimeout(
+        getEnsText(client, {
+          name: normalizedEnsName,
+          key: "header", 
+        }),
+        ENS_TIMEOUT_MS
+      ).then(res => res || withTimeout(
+        getEnsText(client, {
+          name: normalizedEnsName,
+          key: "banner",
+        }),
+        ENS_TIMEOUT_MS
+      )).catch(() => null);
+
+      ensBanner = normalizeUrl(resolvedBanner);
+    } catch {
     }
 
     return NextResponse.json({

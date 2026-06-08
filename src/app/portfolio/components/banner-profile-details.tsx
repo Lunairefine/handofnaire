@@ -1,5 +1,7 @@
 "use client";
 
+import { useAppContext } from "@/app/components/AppContext";
+
 type BannerProfileDetailsProps = {
   address: string;
   headingLabel: string;
@@ -23,7 +25,16 @@ export default function BannerProfileDetails({
   isLoading,
   onCopy,
 }: BannerProfileDetailsProps) {
-  const avatarSrc = ensAvatar || ensAvatarFallback;
+  const { theme } = useAppContext();
+  
+  let avatarSrc = ensAvatar || ensAvatarFallback;
+  if (!avatarSrc && address) {
+    const cleanAddress = address.toLowerCase();
+    const charSum = cleanAddress.split('').reduce((sum, c) => sum + c.charCodeAt(0), 0);
+    const imageIndex = (charSum % 4) + 1;
+    const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+    avatarSrc = `/media/syntax/${bgPrefix}${imageIndex}.png`;
+  }
   const avatarFallbackLabel = headingLabel.replace(/^0x/i, "").charAt(0).toUpperCase();
 
   return (
@@ -48,11 +59,23 @@ export default function BannerProfileDetails({
                 const image = event.currentTarget;
 
                 if (
+                  ensAvatar &&
                   ensAvatarFallback &&
+                  image.src !== ensAvatarFallback &&
                   image.dataset.fallbackApplied !== "true"
                 ) {
                   image.dataset.fallbackApplied = "true";
                   image.src = ensAvatarFallback;
+                  return;
+                }
+
+                if (address && image.dataset.syntaxFallbackApplied !== "true") {
+                  image.dataset.syntaxFallbackApplied = "true";
+                  const cleanAddress = address.toLowerCase();
+                  const charSum = cleanAddress.split('').reduce((sum, c) => sum + c.charCodeAt(0), 0);
+                  const imageIndex = (charSum % 4) + 1;
+                  const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+                  image.src = `/media/syntax/${bgPrefix}${imageIndex}.png`;
                   return;
                 }
 

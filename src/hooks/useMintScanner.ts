@@ -17,12 +17,10 @@ export function useMintScanner(mode: string = 'ERC721') {
   const lastBlockRef = useRef<number>(0);
   const isScanningRef = useRef<boolean>(isScanning);
 
-  // Sync refs for interval closures
   useEffect(() => {
     isScanningRef.current = isScanning;
   }, [isScanning]);
 
-  // Handle Live RPC Polling Loop
   useEffect(() => {
     let pollingTimeout: NodeJS.Timeout;
 
@@ -40,7 +38,6 @@ export function useMintScanner(mode: string = 'ERC721') {
             const prevBlock = lastBlockRef.current;
             lastBlockRef.current = blockNumber;
             
-            // On first run, we scan the current block and the previous one to show immediate results
             const startScan = prevBlock === 0 ? blockNumber - 1 : blockNumber;
             const endScan = blockNumber;
 
@@ -49,17 +46,16 @@ export function useMintScanner(mode: string = 'ERC721') {
               
               const topics = mode === 'ERC721' ? [
                 [
-                  '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', // ERC-721 Transfer
-                  '0xc3d58168c5ae7397731d063d5bbf3d65785442f3937666f3aec8580e0593f7b0', // ERC-1155 TransferSingle
-                  '0x4a0b2308138e10cdd41602622944a335be9924aff02798d94e2163c4cdb18d8d'  // ERC-1155 TransferBatch
+                  '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', 
+                  '0xc3d58168c5ae7397731d063d5bbf3d65785442f3937666f3aec8580e0593f7b0', 
+                  '0x4a0b2308138e10cdd41602622944a335be9924aff02798d94e2163c4cdb18d8d'  
                 ]
               ] : [
                 [
-                  '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' // ERC-20 Transfer
+                  '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' 
                 ]
               ];
 
-              // 1. Fetch logs
               const logs = (await provider.getLogs({
                 fromBlock: b,
                 toBlock: b,
@@ -71,21 +67,17 @@ export function useMintScanner(mode: string = 'ERC721') {
                 continue;
               }
 
-              // Filter for from == address(0)
               const mintLogs = logs.filter(log => {
                 const isTransfer = log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
                 if (isTransfer) {
                   if (mode === 'ERC721') {
-                    // ERC721 has 4 topics
                     return log.topics.length === 4 && log.topics[1] === '0x0000000000000000000000000000000000000000000000000000000000000000';
                   } else {
-                    // ERC20 has 3 topics
                     return log.topics.length === 3 && log.topics[1] === '0x0000000000000000000000000000000000000000000000000000000000000000';
                   }
                 }
                 
                 if (mode === 'ERC721') {
-                  // ERC-1155 TransferSingle/Batch: from is topics[2]
                   return log.topics[2] === '0x0000000000000000000000000000000000000000000000000000000000000000';
                 }
 
@@ -99,7 +91,6 @@ export function useMintScanner(mode: string = 'ERC721') {
 
               console.log(`Detected ${mintLogs.length} potential mints in block #${b}`);
               
-              // Group logs by transaction hash
               const txHashToLogs = new Map<string, ethers.Log[]>();
               mintLogs.forEach(log => {
                 if (!txHashToLogs.has(log.transactionHash)) {
@@ -112,7 +103,6 @@ export function useMintScanner(mode: string = 'ERC721') {
               const newTxs: MintTransaction[] = [];
               const uniqueHashes = Array.from(txHashToLogs.keys());
 
-              // 2. Fetch transaction details for each mint hash
               const BATCH_SIZE = 5;
               for (let i = 0; i < uniqueHashes.length; i += BATCH_SIZE) {
                 const batch = uniqueHashes.slice(i, i + BATCH_SIZE);
@@ -176,7 +166,6 @@ export function useMintScanner(mode: string = 'ERC721') {
           setStatus(`RPC Connection Issue: ${errorMessage}. Retrying...`);
         }
         
-        // Schedule next poll
         pollingTimeout = setTimeout(pollBlock, 5000);
       };
 

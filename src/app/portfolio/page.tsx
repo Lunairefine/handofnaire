@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search } from 'lucide-react';
+
 
 export default function PortfolioSearchPage() {
   const router = useRouter();

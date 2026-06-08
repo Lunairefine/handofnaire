@@ -35,7 +35,7 @@ export default function LiveFeed({
 
   return (
     <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col h-[600px]">
-      {/* Header */}
+      {}
       <div className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-surface)] shrink-0">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
@@ -53,7 +53,7 @@ export default function LiveFeed({
         </button>
       </div>
 
-      {/* Filter Tabs */}
+      {}
       <div className="flex border-b border-[var(--border-color)] overflow-x-auto no-scrollbar p-1 gap-1 bg-[var(--bg-main)]/50 shrink-0">
         {['all', 'public', 'whitelist', 'free', 'paid', 'owner'].map(tab => (
           <button
@@ -70,7 +70,7 @@ export default function LiveFeed({
         ))}
       </div>
 
-      {/* Feed List */}
+      {}
       <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3">
         {filteredTxs.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6">
@@ -97,7 +97,7 @@ export default function LiveFeed({
                     : 'border-[var(--border-color)] bg-[var(--bg-main)] hover:bg-[var(--bg-surface)]'
                 }`}
               >
-                {/* Left Section: Contract, Selector */}
+                {}
                 <div className="flex items-start gap-3">
                   <div className={`p-2 rounded-[1px] border ${config.bg} ${config.border} ${config.text} shrink-0`}>
                     <TypeIcon size={16} />
@@ -119,14 +119,14 @@ export default function LiveFeed({
                       </span>
                     </div>
                     
-                    {/* Tx Hash Link with Direct Etherscan Link */}
+                    {}
                     <div className="flex items-center gap-1.5 mt-0.5 font-sans text-[10px]">
                       <span className="text-[var(--text-secondary)]">Tx Hash:</span>
                       <a
                         href={`https://etherscan.io/tx/${tx.hash}`}
                         target="_blank"
                         rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()} // prevent select on click
+                        onClick={(e) => e.stopPropagation()} 
                         className="text-teal-500 hover:text-teal-400 font-semibold hover:underline flex items-center gap-0.5"
                       >
                         {shortenHash(tx.hash, 5)}
@@ -140,7 +140,7 @@ export default function LiveFeed({
                   </div>
                 </div>
 
-                {/* Right Section: Quantity, Pricing, Action */}
+                {}
                 <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-[var(--border-color)]">
                   <div className="text-left sm:text-right font-sans">
                     <span className="text-xs font-bold text-[var(--text-primary)]">

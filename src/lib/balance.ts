@@ -22,7 +22,7 @@ export async function getBalances(address: string): Promise<ChainBalance[]> {
           chain,
           balance: formatEther(balance)
         }
-      } catch (error) {
+      } catch {
         return {
           chain,
           balance: '0'

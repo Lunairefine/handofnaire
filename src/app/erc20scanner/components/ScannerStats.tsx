@@ -23,7 +23,7 @@ export default function ScannerStats({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      {/* Block Height Card */}
+      {}
       <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-4 rounded-[1px] relative overflow-hidden">
         <div className="flex justify-between items-start">
           <div>
@@ -53,7 +53,7 @@ export default function ScannerStats({
         </div>
       </div>
 
-      {/* Blocks Scanned Card */}
+      {}
       <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-4 rounded-[1px] relative overflow-hidden">
         <div className="flex justify-between items-start">
           <div>
@@ -74,7 +74,7 @@ export default function ScannerStats({
         </div>
       </div>
 
-      {/* Active Mints Card */}
+      {}
       <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-4 rounded-[1px] relative overflow-hidden">
         <div className="flex justify-between items-start">
           <div>
@@ -93,7 +93,7 @@ export default function ScannerStats({
         </div>
       </div>
 
-      {/* TPS / Speed Card */}
+      {}
       <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-4 rounded-[1px] relative overflow-hidden">
         <div className="flex justify-between items-start">
           <div>

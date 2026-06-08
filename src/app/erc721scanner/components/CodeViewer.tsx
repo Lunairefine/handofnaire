@@ -7,35 +7,26 @@ interface CodeViewerProps {
   isLoading: boolean;
 }
 
-// Custom Solidity Syntax Highlighter
 function highlightSolidity(code: string): string {
   if (!code) return '';
 
-  // Escape HTML characters
   let escaped = code
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-  // Class styling maps
   const keywords = /\b(contract|interface|library|is|import|pragma|solidity|constructor)\b/g;
   const modifiers = /\b(function|modifier|returns?|external|public|internal|private|view|pure|payable|virtual|override)\b/g;
   const control = /\b(require|revert|assert|if|else|for|while|return)\b/g;
   const types = /\b(uint256|uint|address|bool|string|bytes32|bytes|mapping|uint8|uint16|uint32|int|bigint)\b/g;
   const globals = /\b(msg\.sender|msg\.value|tx\.origin|block\.timestamp|block\.number|address\(this\))\b/g;
   
-  // Apply highlighting (wrapped in spans)
-  // Double quotes strings
   escaped = escaped.replace(/(".*?")/g, '<span class="text-emerald-500">$1</span>');
-  // Single quotes strings
   escaped = escaped.replace(/('.*?')/g, '<span class="text-emerald-500">$1</span>');
   
-  // Comments (single line)
   escaped = escaped.replace(/(\/\/.*)/g, '<span class="text-gray-500 italic">$1</span>');
-  // Comments (multiline)
   escaped = escaped.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="text-gray-500 italic">$1</span>');
 
-  // Highlight standard categories
   escaped = escaped.replace(keywords, '<span class="text-indigo-400 font-bold">$1</span>');
   escaped = escaped.replace(modifiers, '<span class="text-teal-400 font-semibold">$1</span>');
   escaped = escaped.replace(control, '<span class="text-rose-400">$1</span>');
@@ -64,7 +55,7 @@ export default function CodeViewer({
 
   return (
     <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-[380px] lg:h-[420px]' : 'h-[44px]'}`}>
-      {/* Header */}
+      {}
       <div 
         onClick={() => setIsOpen(!isOpen)}
         className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-surface)] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
@@ -100,7 +91,7 @@ export default function CodeViewer({
         </button>
       </div>
 
-      {/* Code Area */}
+      {}
       <div className={`flex-1 overflow-auto p-4 bg-black font-sans text-xs text-gray-300 relative no-scrollbar leading-relaxed transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         {isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 gap-3">

@@ -33,7 +33,6 @@ export default function ContractDetails({
     setIsMinting(true);
     setMintStatusText('Constructing transaction payload...');
     
-    // Generate a random mock tx hash for the mint transaction
     const mockHash = '0x' + Array.from({ length: 64 }, () => 
       Math.floor(Math.random() * 16).toString(16)
     ).join('');
@@ -46,7 +45,6 @@ export default function ContractDetails({
         setTimeout(() => {
           setIsMinting(false);
           setMintStatusText(`Success! Minted NFT successfully! 🎉`);
-          // Save the hash to allow users to click it
           setTimeout(() => {
             setMintStatusText(`Tx Hash: ${shortenHash(mockHash)} (Click to view)`);
           }, 1500);
@@ -55,7 +53,6 @@ export default function ContractDetails({
     }, 1000);
   };
 
-  // If no transaction is selected yet
   if (!selectedTx) {
     return (
       <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-6 rounded-[1px] h-[480px] flex flex-col items-center justify-center text-center">
@@ -80,7 +77,7 @@ export default function ContractDetails({
     <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-5 rounded-[1px] flex flex-col gap-5 h-auto lg:h-[680px] overflow-y-auto no-scrollbar justify-between">
       
       <div>
-        {/* SECTION 1: INSTANT TRANSACTION DETAILS (Does not wait for metadata load!) */}
+        {}
         <div className="mb-4">
           <div className="flex items-center gap-1.5 mb-2.5">
             <Hash size={13} className="text-teal-500" />
@@ -90,7 +87,7 @@ export default function ContractDetails({
           </div>
 
           <div className="border border-[var(--border-color)] bg-[var(--bg-main)] p-3 rounded-[1px] font-sans text-[11px] space-y-2.5">
-            {/* Tx Hash */}
+            {}
             <div className="flex justify-between items-center py-1 border-b border-[var(--border-color)]/50 gap-2">
               <span className="text-[var(--text-secondary)] shrink-0">TX HASH:</span>
               <div className="flex items-center gap-2 overflow-hidden">
@@ -114,7 +111,7 @@ export default function ContractDetails({
               </div>
             </div>
 
-            {/* Interacted Contract (To) */}
+            {}
             <div className="flex justify-between items-center py-1 border-b border-[var(--border-color)]/50 gap-2">
               <span className="text-[var(--text-secondary)] shrink-0">INTERACTED CONTRACT (TO):</span>
               <div className="flex items-center gap-2 overflow-hidden">
@@ -149,7 +146,7 @@ export default function ContractDetails({
               </div>
             </div>
 
-            {/* Token Contract Address (CA) */}
+            {}
             <div className="flex justify-between items-center py-1 border-b border-[var(--border-color)]/50 gap-2">
               <span className="text-[var(--text-secondary)] shrink-0">TOKEN CONTRACT (NFT):</span>
               <div className="flex items-center gap-2 overflow-hidden">
@@ -173,7 +170,7 @@ export default function ContractDetails({
               </div>
             </div>
 
-            {/* Sender (From) */}
+            {}
             <div className="flex justify-between items-center py-1 border-b border-[var(--border-color)]/50 gap-2">
               <span className="text-[var(--text-secondary)] shrink-0">SENDER (FROM):</span>
               <div className="flex items-center gap-2 overflow-hidden">
@@ -197,7 +194,7 @@ export default function ContractDetails({
               </div>
             </div>
 
-            {/* Specs Grid */}
+            {}
             <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 pt-1.5 text-[10px]">
               <div className="flex justify-between">
                 <span className="text-[var(--text-secondary)]">QUANTITY:</span>
@@ -223,7 +220,7 @@ export default function ContractDetails({
 
 
 
-        {/* SECTION 3: CONTRACT METADATA (Displays pulsing skeletons when loading metadata) */}
+        {}
         <div className="border-t border-[var(--border-color)] pt-4 mt-2">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
@@ -240,7 +237,6 @@ export default function ContractDetails({
           </div>
 
           {isLoading || !metadata ? (
-            /* Pulsing Skeleton Loader */
             <div className="border border-[var(--border-color)] bg-[var(--bg-main)]/30 p-4 rounded-[1px] flex flex-col gap-3.5 animate-pulse">
               <div className="flex justify-between items-center">
                 <div className="h-4 bg-[var(--border-color)] w-1/3 rounded-[1px]"></div>
@@ -256,7 +252,6 @@ export default function ContractDetails({
               </div>
             </div>
           ) : (
-            /* Real Metadata Content */
             <div className="border border-[var(--border-color)] bg-[var(--bg-main)] p-4 rounded-[1px] space-y-4">
               <div className="flex justify-between items-start">
                 <div>
@@ -276,7 +271,7 @@ export default function ContractDetails({
                 </span>
               </div>
 
-              {/* Progress bar */}
+              {}
               <div>
                 <div className="flex justify-between items-center text-[10px] font-sans mb-1.5">
                   <span className="text-[var(--text-secondary)] font-medium">Mint Progress</span>
@@ -296,7 +291,7 @@ export default function ContractDetails({
                 </div>
               </div>
 
-              {/* Grid pricing & deployer */}
+              {}
               <div className="grid grid-cols-2 gap-3 font-sans text-[10px]">
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-2.5 rounded-[1px]">
                   <p className="text-[9px] text-[var(--text-secondary)] uppercase">Mint Price</p>
@@ -312,7 +307,7 @@ export default function ContractDetails({
                 </div>
               </div>
 
-              {/* Contract Capabilities */}
+              {}
               <div className="grid grid-cols-2 gap-1.5 pt-1">
                 {[
                   { label: 'ERC721A Standard', active: metadata.isERC721A },
@@ -338,7 +333,7 @@ export default function ContractDetails({
         </div>
       </div>
 
-      {/* SECTION 4: INTERACTIVE MINT TRIGGER (Always sharp borders) */}
+      {}
       <div className="border-t border-[var(--border-color)] pt-4 mt-2">
         <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-2 font-sans flex items-center gap-1.5">
           <Terminal size={12} className="text-teal-500" />
@@ -376,7 +371,7 @@ export default function ContractDetails({
           </div>
         ) : (
           <div className="flex gap-2">
-            {/* Quantity Selector */}
+            {}
             <div className="flex items-center border border-[var(--border-color)] bg-[var(--bg-main)] rounded-[1px]">
               <button
                 onClick={() => setMintQuantity(q => Math.max(1, q - 1))}
@@ -395,7 +390,7 @@ export default function ContractDetails({
               </button>
             </div>
 
-            {/* Mint Action Button */}
+            {}
             <button
               onClick={handleMockMint}
               disabled={!!(metadata && metadata.mintStatus !== 'Active')}

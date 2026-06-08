@@ -52,15 +52,9 @@ type BlockscoutTransactionsResponse = {
 };
 
 const getBlockscoutConfig = (): BlockscoutConfig => {
-  const apiBaseUrl = process.env.BLOCKSCOUT_API_BASE_URL;
-  const apiKey = process.env.BLOCKSCOUT_API_KEY;
-  const chainId = process.env.BLOCKSCOUT_CHAIN_ID;
-
-  if (!apiBaseUrl || !apiKey || !chainId) {
-    throw new Error(
-      "Missing Blockscout configuration. Set BLOCKSCOUT_API_BASE_URL, BLOCKSCOUT_CHAIN_ID, and BLOCKSCOUT_API_KEY in .env.local."
-    );
-  }
+  const apiBaseUrl = process.env.BLOCKSCOUT_API_BASE_URL || "https://eth.blockscout.com";
+  const apiKey = process.env.BLOCKSCOUT_API_KEY || "";
+  const chainId = process.env.BLOCKSCOUT_CHAIN_ID || "1";
 
   return {
     apiBaseUrl: apiBaseUrl.replace(/\/$/, ""),
@@ -79,10 +73,14 @@ const buildAddressUrl = (
     throw new Error("Address tidak valid.");
   }
 
+  const basePath = process.env.BLOCKSCOUT_API_BASE_URL ? `${apiBaseUrl}/${chainId}` : apiBaseUrl;
+
   const url = new URL(
-    `${apiBaseUrl}/${chainId}/api/v2/addresses/${address}/${resource}`
+    `${basePath}/api/v2/addresses/${address}/${resource}`
   );
-  url.searchParams.set("apikey", apiKey);
+  if (apiKey) {
+    url.searchParams.set("apikey", apiKey);
+  }
   return url;
 };
 
@@ -100,8 +98,11 @@ const toNumber = (value?: string) => {
 
 const buildAddressDetailUrl = (address: string) => {
   const { apiBaseUrl, apiKey, chainId } = getBlockscoutConfig();
-  const url = new URL(`${apiBaseUrl}/${chainId}/api/v2/addresses/${address}`);
-  url.searchParams.set("apikey", apiKey);
+  const basePath = process.env.BLOCKSCOUT_API_BASE_URL ? `${apiBaseUrl}/${chainId}` : apiBaseUrl;
+  const url = new URL(`${basePath}/api/v2/addresses/${address}`);
+  if (apiKey) {
+    url.searchParams.set("apikey", apiKey);
+  }
   return url;
 };
 
@@ -124,7 +125,6 @@ export async function getBlockscoutHoldings(address: string) {
 
   const holdings: AddressTokenBalance[] = [];
 
-  // Add native balance
   if (addressPayload && addressPayload.coin_balance) {
     holdings.push({
       address: "native",
@@ -141,7 +141,6 @@ export async function getBlockscoutHoldings(address: string) {
     });
   }
 
-  // Add token balances
   if (Array.isArray(tokensPayload)) {
     const tokens = tokensPayload
       .map((item) => item as BlockscoutTokenBalanceItem)

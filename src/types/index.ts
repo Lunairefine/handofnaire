@@ -1,16 +1,16 @@
 export interface MintTransaction {
-  id: string; // unique internal id
+  id: string; 
   hash: string;
   blockNumber: number;
   timestamp: number;
-  contractAddress: string; // Token Contract Address
-  to: string; // Interacted Contract Address
-  from: string; // Sender Address
-  value: string; // in ETH
+  contractAddress: string; 
+  to: string; 
+  from: string; 
+  value: string; 
   functionName: string;
   functionSelector: string;
   mintType: 'public' | 'whitelist' | 'owner' | 'free' | 'paid';
-  mintPrice: string; // in ETH
+  mintPrice: string; 
   quantity: number;
 }
 

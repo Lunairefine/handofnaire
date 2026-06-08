@@ -24,10 +24,9 @@ const buildChart = (history: BalanceSnapshot[], windowStart: number) => {
   const totals = series.map((item) => item.totalUsd);
   const min = Math.min(...totals);
   const max = Math.max(...totals);
-  const range = max - min || 0.0001; // Avoid division by zero
+  const range = max - min || 0.0001; 
 
   const points = series.map((item) => {
-    // Force horizontal spread across the full 24h window (0 to CHART_WIDTH)
     const timeRatio = (item.timestamp - windowStart) / ONE_DAY_IN_MS;
     const x = Math.max(0, Math.min(CHART_WIDTH, timeRatio * CHART_WIDTH));
     
@@ -69,26 +68,22 @@ export default function BalanceHistoryChart({
       (left, right) => left.timestamp - right.timestamp
     );
 
-    // Only keep history from the last 24h
     const entriesInWindow = sortedHistory.filter(
       (entry) => entry.timestamp >= windowStart && entry.timestamp <= windowEnd
     );
 
-    // Find the latest value just before our window
     const latestBeforeWindow = [...sortedHistory]
       .reverse()
       .find((entry) => entry.timestamp < windowStart);
 
     const initialValue = latestBeforeWindow?.totalUsd ?? entriesInWindow[0]?.totalUsd ?? currentTotalUsd;
 
-    // Build the 24h points
     const series = [
       { timestamp: windowStart, totalUsd: initialValue },
       ...entriesInWindow,
       { timestamp: windowEnd, totalUsd: currentTotalUsd },
     ].sort((a, b) => a.timestamp - b.timestamp);
 
-    // Remove duplicates
     return series.reduce<BalanceSnapshot[]>((acc, entry) => {
       const last = acc[acc.length - 1];
       if (last && last.timestamp === entry.timestamp) {
@@ -131,15 +126,15 @@ export default function BalanceHistoryChart({
           >
             <defs>
               <linearGradient id="balance-area" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="var(--teal)" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="var(--teal)" stopOpacity="0" />
+                <stop offset="0%" stopColor="var(--accent-teal)" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="var(--accent-teal)" stopOpacity="0" />
               </linearGradient>
             </defs>
             <path d={chartData.areaPath} fill="url(#balance-area)" />
             <path
               d={chartData.linePath}
               fill="none"
-              stroke="var(--teal)"
+              stroke="var(--accent-teal)"
               strokeWidth="1"
               strokeLinecap="round"
               strokeLinejoin="round"

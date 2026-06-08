@@ -32,7 +32,6 @@ export async function getContractMetadata(
 ): Promise<ContractMetadata> {
   const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
   
-  // Setup standard guesses
   const seed = parseInt(address.slice(2, 8), 16) || 0;
   const mockName = RANDOM_NAMES[seed % RANDOM_NAMES.length] + ' #' + (seed % 100);
   const mockSymbol = RANDOM_SYMBOLS[seed % RANDOM_SYMBOLS.length];
@@ -61,10 +60,8 @@ export async function getContractMetadata(
   try {
     const provider = new ethers.JsonRpcProvider(rpcUrl, undefined, { staticNetwork: true });
     
-    // Create contract instance with timeout wrapper
     const contract = new ethers.Contract(address, ERC721_ABI, provider);
 
-    // Call functions with timeouts to prevent UI blocking
     const fetchWithTimeout = async <T>(promise: Promise<T>, defaultValue: T): Promise<T> => {
       return Promise.race([
         promise,
@@ -137,11 +134,10 @@ export async function getContractMetadata(
       availableMint,
       isOwnable,
       isPausable,
-      isERC721A: baseResult.isERC721A, // keep fallback guess
-      hasMerkleWhitelist: baseResult.hasMerkleWhitelist, // keep fallback guess
+      isERC721A: baseResult.isERC721A, 
+      hasMerkleWhitelist: baseResult.hasMerkleWhitelist, 
     };
   } catch {
-    // If provider fails, return highly realistic mock data
     return baseResult;
   }
 }

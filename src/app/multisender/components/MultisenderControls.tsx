@@ -1,6 +1,6 @@
 'use client'
 
-import { CHAINS } from '@/lib/chains'
+
 
 interface MultisenderControlsProps {
   network: string

@@ -5,7 +5,7 @@ import MultisenderType, { SenderType } from '@/app/multisender/components/Multis
 import MultisenderForm from '@/app/multisender/components/MultisenderForm'
 import MultisenderControls from '@/app/multisender/components/MultisenderControls'
 import MultisenderTable from '@/app/multisender/components/MultisenderTable'
-import { multisend, RecipientData } from '@/lib/multisender'
+import { sendNative, delay, type TxData } from '@/lib/multisender'
 import { CHAINS } from '@/lib/chains'
 import { privateKeyToAccount } from 'viem/accounts'
 
@@ -20,7 +20,6 @@ export default function Multisender() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
-  // Parse input data to build preview transactions whenever inputs change
   useEffect(() => {
     try {
       let txs: TxData[] = []
@@ -48,7 +47,7 @@ export default function Multisender() {
         txs = pks.map((pk, i) => {
           let from = 'Invalid PK'
           if (pk.startsWith('0x')) {
-            try { from = privateKeyToAccount(pk as `0x${string}`).address } catch(e) {}
+            try { from = privateKeyToAccount(pk as `0x${string}`).address } catch {}
           }
           return {
             id: `tx-${i}`,
@@ -67,7 +66,7 @@ export default function Multisender() {
             const address = targets[i] || 'Invalid Address'
             let from = 'Invalid PK'
             if (pk.startsWith('0x')) {
-              try { from = privateKeyToAccount(pk as `0x${string}`).address } catch(e) {}
+              try { from = privateKeyToAccount(pk as `0x${string}`).address } catch {}
             }
             return {
               id: `tx-${i}`,
@@ -83,8 +82,7 @@ export default function Multisender() {
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setTransactions(txs)
-    } catch (error) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+    } catch {
       setTransactions([])
     }
   }, [type, pkInput, targetInput, amountInput])
@@ -102,7 +100,6 @@ export default function Multisender() {
 
     const selectedChain = CHAINS[network as keyof typeof CHAINS]
     
-    // Batch processing to avoid spamming RPC
     const BATCH_SIZE = 5
     
     for (let i = 0; i < transactions.length; i += BATCH_SIZE) {
@@ -131,7 +128,6 @@ export default function Multisender() {
         })
       )
       
-      // Delay between batches
       if (i + BATCH_SIZE < transactions.length) {
         await delay(1000)
       }
@@ -158,7 +154,7 @@ export default function Multisender() {
       </div>
 
       <div className="space-y-6 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-[1px] p-6">
-        {/* Network Selector Moved to Top */}
+        {}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border-color)]">
           <div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)]">Transaction Setup</h3>
@@ -211,7 +207,7 @@ export default function Multisender() {
 
       <MultisenderTable transactions={transactions} />
 
-      {/* Confirmation Modal */}
+      {}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-[var(--bg-main)] border border-[var(--border-color)] rounded-[1px] p-6 max-w-md w-full shadow-2xl">

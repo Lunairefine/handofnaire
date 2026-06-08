@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
 
-// Common NFT Mint Function Signatures and their 4-byte selectors
 export const MINT_SIGNATURES: Record<string, string> = {
   '0xa0712d68': 'mint(uint256)',
   '0x1249c5b2': 'mint()',
@@ -35,8 +34,6 @@ export function detectMintFunction(input: string): { isMint: boolean; selector: 
     };
   }
 
-  // Fallback check: if it contains "mint" or "claim" in generic ways
-  // We can check if selector name contains typical minting words by analyzing common patterns
   return { isMint: false, selector, functionName: '' };
 }
 
@@ -56,18 +53,15 @@ export function decodeMintInput(input: string, selector: string): { quantity: nu
     let quantity = 1;
     let recipient = '';
 
-    // Extract quantity from decoded arguments
     if (signature.includes('uint256')) {
       for (const key of Object.keys(decoded)) {
         if (typeof decoded[key] === 'bigint' || typeof decoded[key] === 'number') {
-          // Typically the uint256 parameter is the quantity
           quantity = Number(decoded[key]);
           break;
         }
       }
     }
 
-    // Extract address if available
     if (signature.includes('address')) {
       for (const key of Object.keys(decoded)) {
         if (typeof decoded[key] === 'string' && decoded[key].startsWith('0x')) {
@@ -77,14 +71,12 @@ export function decodeMintInput(input: string, selector: string): { quantity: nu
       }
     }
 
-    // Sanity limit quantity
     if (quantity <= 0 || quantity > 10000) {
       quantity = 1;
     }
 
     return { quantity, recipient };
   } catch {
-    // If decoding fails, return fallback defaults
     return { quantity: 1, recipient: '' };
   }
 }

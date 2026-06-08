@@ -14,8 +14,8 @@ type BalanceSnapshot = {
   totalUsd: number;
 };
 
-const HISTORY_LIMIT = 48; // Increase points for smoother 24h chart
-const HISTORY_EPSILON = 0.0001; // Capture even tiny price movements
+const HISTORY_LIMIT = 48; 
+const HISTORY_EPSILON = 0.0001; 
 
 const getHistoryStorageKey = (address: string) =>
   `nairescan:balance-history:${address.toLowerCase()}`;
@@ -242,7 +242,7 @@ export default function BannerProfile({ address }: { address: string }) {
         minHeight: "300px",
       }}
     >
-      {/* Banner Background */}
+      {}
       {ensBanner ? (
         <div className="absolute inset-0 z-0">
           <img 

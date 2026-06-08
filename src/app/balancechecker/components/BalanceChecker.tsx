@@ -15,7 +15,6 @@ export default function BalanceChecker() {
     const rawAddresses = inputAddresses.split('\n').map(a => a.trim()).filter(a => a.startsWith('0x'))
     if (rawAddresses.length === 0) return
 
-    // Limit to max 50 addresses per run as per rules
     const addressesToProcess = rawAddresses.slice(0, 50)
 
     setIsLoading(true)
