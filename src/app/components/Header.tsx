@@ -3,13 +3,14 @@
 import React from 'react';
 import { Sun, Moon, Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useAppContext } from './AppContext';
 
 export default function Header() {
   const { theme, toggleTheme, isMobileMenuOpen, setMobileMenuOpen } = useAppContext();
 
   return (
-    <header className="sticky top-0 bg-[var(--bg-main)]/80 backdrop-blur-md border-b border-[var(--border-color)] z-50 px-4 md:px-6 h-[52px] flex justify-between items-center w-full">
+    <header className="fixed top-0 bg-[var(--bg-main)]/80 backdrop-blur-md border-b border-[var(--border-color)] z-50 px-4 md:px-6 h-[52px] flex justify-between items-center w-full">
       <div className="flex items-center gap-3">
         <button 
           className="md:hidden text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors p-1 -ml-2"
@@ -17,7 +18,7 @@ export default function Header() {
         >
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-        <div className="shrink-0 relative w-7 h-7">
+        <Link href="/" className="shrink-0 relative w-7 h-7 block">
           <Image 
             src={theme === 'dark' ? '/media/SyntaxWhite.png' : '/media/SyntaxBlack.png'} 
             alt="Hand of Naire" 
@@ -25,7 +26,7 @@ export default function Header() {
             sizes="28px"
             className="object-contain"
           />
-        </div>
+        </Link>
       </div>
 
       <div className="flex items-center gap-3 font-sans">

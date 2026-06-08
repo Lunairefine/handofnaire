@@ -47,7 +47,7 @@ export default function AddressPortfolioSection({
         })}
       </div>
 
-      <div className="mt-2">
+      <div className="">
         <div className={activeTab === "holdings" ? "block" : "hidden"}>
           <AddressHoldingsPanel address={address} />
         </div>

@@ -20,7 +20,7 @@ export default function WalletControls({
   isGeneratingVanity,
   progress,
 }: WalletControlsProps) {
-  const [count, setCount] = useState(10)
+  const [count, setCount] = useState<number | ''>(5)
   const [isVanityMode, setIsVanityMode] = useState(false)
   const [prefix, setPrefix] = useState('')
   const [suffix, setSuffix] = useState('')
@@ -56,15 +56,15 @@ export default function WalletControls({
             <input
               type="number"
               value={count}
-              onChange={(e) => setCount(Number(e.target.value))}
+              onChange={(e) => setCount(e.target.value === '' ? '' : Number(e.target.value))}
               min="1"
               max="1000"
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500 text-base"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
           <div className="flex gap-3 w-full sm:w-auto">
             <button
-              onClick={() => onGenerate(count)}
+              onClick={() => onGenerate(Number(count) || 1)}
               className="flex-1 sm:flex-initial bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px] whitespace-nowrap"
             >
               Generate

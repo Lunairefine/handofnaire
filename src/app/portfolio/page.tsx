@@ -23,10 +23,10 @@ export default function PortfolioSearchPage() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-start pt-[10vh] pb-12">
+    <div className="w-full overflow-x-hidden flex flex-col items-center justify-start pt-[12vh] md:pt-[24vh] pb-12 px-4 sm:px-6">
       <div className="w-full max-w-2xl space-y-12">
-        <div className="text-center">
-          <h2 className="text-5xl font-bold font-sans tracking-tight uppercase">HAND OF NAIRE</h2>
+        <div className="text-center select-none overflow-hidden w-full">
+          <h2 className="text-[clamp(1.75rem,8.5vw,3.5rem)] font-bold font-sans tracking-tight uppercase whitespace-nowrap text-center">HAND OF NAIRE</h2>
         </div>
 
         <div className="w-full space-y-4">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ContractMetadata, MintTransaction } from '@/types';
 import { shortenAddress, shortenHash, getKnownContract } from '@/utils/format';
-import { ExternalLink, Compass, Zap, Copy, Check, Hash, Coins, Terminal } from 'lucide-react';
+import { ExternalLink, Compass, Zap, Copy, Check, Hash, Coins, Terminal, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ContractDetailsProps {
   metadata: ContractMetadata | null;
@@ -17,6 +17,7 @@ export default function ContractDetails({
   mode = 'ERC721'
 }: ContractDetailsProps) {
   const [mintQuantity, setMintQuantity] = useState<number>(1);
+  const [isOpen, setIsOpen] = useState(true);
   const [isMinting, setIsMinting] = useState<boolean>(false);
   const [mintStatusText, setMintStatusText] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -74,8 +75,22 @@ export default function ContractDetails({
     : 0;
 
   return (
-    <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-5 rounded-[1px] flex flex-col gap-5 h-auto lg:h-[680px] overflow-y-auto no-scrollbar justify-between">
-      
+    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-[680px]' : 'h-[49px]'}`}>
+      <div 
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-surface)] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <div className="text-[var(--text-secondary)]">
+            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </div>
+          <Compass size={16} className="text-teal-500" />
+          <h2 className="font-bold text-xs uppercase tracking-wider text-[var(--text-primary)] font-sans">
+            Contract Details
+          </h2>
+        </div>
+      </div>
+      <div className={`flex flex-col gap-5 p-5 flex-1 overflow-y-auto no-scrollbar justify-between transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
       <div>
         {}
         <div className="mb-4">
@@ -401,7 +416,7 @@ export default function ContractDetails({
           </div>
         )}
       </div>
-
+      </div>
     </div>
   );
 }

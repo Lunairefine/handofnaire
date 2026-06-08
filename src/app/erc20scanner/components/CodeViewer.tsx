@@ -54,7 +54,7 @@ export default function CodeViewer({
   const highlightedHTML = React.useMemo(() => highlightSolidity(solidityCode), [solidityCode]);
 
   return (
-    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-[380px] lg:h-[420px]' : 'h-[44px]'}`}>
+    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-[380px] lg:h-[420px]' : 'h-[56px]'}`}>
       {}
       <div 
         onClick={() => setIsOpen(!isOpen)}

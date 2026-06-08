@@ -155,7 +155,7 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
           if (!avatarUrl && partyHash) {
             const charSum = partyHash.split('').reduce((sum: number, c: string) => sum + c.charCodeAt(0), 0);
             const imageIndex = (charSum % 4) + 1; 
-            const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+            const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
             avatarUrl = `/media/syntax/${bgPrefix}${imageIndex}.png`;
           }
 
@@ -171,7 +171,7 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
                       e.currentTarget.dataset.syntaxFallbackApplied = "true";
                       const charSum = partyHash.split('').reduce((sum: number, c: string) => sum + c.charCodeAt(0), 0);
                       const imageIndex = (charSum % 4) + 1;
-                      const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+                      const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
                       e.currentTarget.src = `/media/syntax/${bgPrefix}${imageIndex}.png`;
                     } else {
                       e.currentTarget.style.display = 'none';
@@ -185,7 +185,7 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
         };
 
         const transactionCard = (
-          <div className="flex items-center justify-between py-4 transition hover:bg-foreground/[0.02] gap-4">
+          <div className="flex items-center justify-between py-2 transition hover:bg-foreground/[0.02] gap-4">
             <div className="flex items-center gap-2 overflow-hidden flex-1">
               {}
               {getAvatar(source)}
@@ -195,8 +195,21 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
 
               {}
               <div className="flex items-center gap-1.5 px-0 py-0.5">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider whitespace-nowrap">
-                  {transaction.method || (isOutgoing ? "Send" : "Receive")}
+                <span 
+                  className="text-[11px] font-bold text-zinc-500 lowercase tracking-wider whitespace-nowrap"
+                  style={{ fontFamily: "'DM Sans', sans-serif" }}
+                >
+                  {(() => {
+                    const isMethod = !!transaction.method;
+                    const method = transaction.method || (isOutgoing ? "Send" : "Receive");
+                    if (isMethod) {
+                      if (method.length > 20) {
+                        return `${method.slice(0, 7)}...${method.slice(-7)}()`;
+                      }
+                      return method.endsWith("()") ? method : `${method}()`;
+                    }
+                    return method;
+                  })()}
                 </span>
               </div>
 

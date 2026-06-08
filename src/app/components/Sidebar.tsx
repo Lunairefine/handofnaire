@@ -1,18 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Images, Coins, FileTerminal, Binary, KeyRound, Heart, Copy, Check, Radar, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from './AppContext';
 
 export default function Sidebar() {
-  const [copiedDonation, setCopiedDonation] = useState<boolean>(false);
   const pathname = usePathname();
   const { isMobileMenuOpen, setMobileMenuOpen } = useAppContext();
 
   const isActive = (path: string) => pathname.includes(path);
   
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isMobileMenuOpen]);
+
   const handleNavClick = () => {
     if (isMobileMenuOpen) setMobileMenuOpen(false);
   };
@@ -81,23 +91,6 @@ export default function Sidebar() {
             </div>
           </div>
         </nav>
-
-        <div className="p-4 border-t border-[var(--border-color)] bg-[var(--bg-main)]/50">
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText('0x9111c47492a9043d12af0e6c46d57560eebcd9d4');
-              setCopiedDonation(true);
-              setTimeout(() => setCopiedDonation(false), 2000);
-            }}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-[1px] border border-rose-500/20 bg-rose-500/5 text-rose-500 hover:bg-rose-500/10 transition-colors font-sans text-[10px] cursor-pointer"
-          >
-            <div className="flex items-center gap-2 font-bold">
-              <Heart size={12} className="animate-pulse" />
-              <span>Donate</span>
-            </div>
-            {copiedDonation ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
-          </button>
-        </div>
       </aside>
     </>
   );

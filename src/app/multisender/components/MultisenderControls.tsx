@@ -30,7 +30,7 @@ export default function MultisenderControls({
       <button
         onClick={onClear}
         disabled={isLoading}
-        className="w-full md:flex-none border border-[var(--border-color)] hover:bg-[var(--bg-surface)] disabled:opacity-50 font-medium px-8 py-3 rounded-[1px] transition-colors text-base"
+        className="w-full md:flex-1 border border-[var(--border-color)] hover:bg-[var(--bg-surface)] disabled:opacity-50 font-medium px-8 py-3 rounded-[1px] transition-colors flex items-center justify-center text-base"
       >
         Clear
       </button>

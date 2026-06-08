@@ -113,7 +113,7 @@ export default function AddressHoldingsPanel({
   return (
     <div className="divide-y divide-foreground/5">
       {holdingsSummary.nativeAsset ? (
-        <div className="flex items-center justify-between py-4 gap-4">
+        <div className="flex items-center justify-between py-2 gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 overflow-hidden flex-shrink-0">
               <img 
@@ -147,7 +147,7 @@ export default function AddressHoldingsPanel({
         return (
           <div
             key={`${token.address}-${token.id}`}
-            className="flex items-center justify-between py-4 gap-4"
+            className="flex items-center justify-between py-2 gap-4"
           >
             <div className="flex items-center gap-3 min-w-0">
               {token.icon ? (

@@ -32,19 +32,14 @@ export default function BannerProfileDetails({
     const cleanAddress = address.toLowerCase();
     const charSum = cleanAddress.split('').reduce((sum, c) => sum + c.charCodeAt(0), 0);
     const imageIndex = (charSum % 4) + 1;
-    const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+    const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
     avatarSrc = `/media/syntax/${bgPrefix}${imageIndex}.png`;
   }
   const avatarFallbackLabel = headingLabel.replace(/^0x/i, "").charAt(0).toUpperCase();
 
   return (
     <div className="flex items-center gap-6">
-      <div
-        className="flex h-28 w-28 flex-shrink-0 items-center justify-center overflow-hidden bg-foreground/5 shadow-sm"
-        style={{
-          clipPath: "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
-        }}
-      >
+      <div className="flex h-28 w-28 flex-shrink-0 items-center justify-center overflow-hidden bg-foreground/5 shadow-sm rounded-full">
         {avatarSrc ? (
           <div className="relative h-full w-full">
             <div className="absolute inset-0 flex items-center justify-center bg-foreground/10 text-2xl font-semibold text-foreground">
@@ -74,7 +69,7 @@ export default function BannerProfileDetails({
                   const cleanAddress = address.toLowerCase();
                   const charSum = cleanAddress.split('').reduce((sum, c) => sum + c.charCodeAt(0), 0);
                   const imageIndex = (charSum % 4) + 1;
-                  const bgPrefix = theme === 'light' ? 'syntaxbgwhite' : 'syntaxbgblack';
+                  const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
                   image.src = `/media/syntax/${bgPrefix}${imageIndex}.png`;
                   return;
                 }
