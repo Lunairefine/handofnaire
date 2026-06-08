@@ -8,9 +8,9 @@ export default function Footer() {
             href="https://debank.com/profile/0x9111c47492a9043d12af0e6c46d57560eebcd9d4"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-teal-400 ml-1 transition-colors font-sans"
+            className="text-teal-500 hover:text-teal-400 ml-1 transition-colors font-sans"
           >
-            Lunairefine
+            lunairefine.eth
           </a>
         </p>
       </div>

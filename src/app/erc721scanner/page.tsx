@@ -19,7 +19,9 @@ export default function ERC721ScannerPage() {
     latestBlock,
     status,
     tps,
-    clearFeed
+    clearFeed,
+    isScanning,
+    toggleScanning
   } = useMintScanner('ERC721');
 
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
@@ -76,11 +78,23 @@ export default function ERC721ScannerPage() {
 
   return (
     <>
-      <div className="space-y-2 mb-8">
-        <h2 className="text-3xl font-bold font-sans">ERC721 Scanner</h2>
-        <p className="text-[var(--text-secondary)] text-sm font-sans">
-          Realtime transaction monitoring & contract safety auditor
-        </p>
+      <div className="flex justify-between items-start mb-8">
+        <div className="space-y-2">
+          <h2 className="text-3xl font-bold font-sans">ERC721 Scanner</h2>
+          <p className="text-[var(--text-secondary)] text-sm font-sans">
+            Realtime transaction monitoring & contract safety auditor
+          </p>
+        </div>
+        <button
+          onClick={toggleScanning}
+          className={`text-xs font-extrabold px-4 py-2 rounded-[1px] cursor-pointer transition-all uppercase tracking-wider text-white ${
+            isScanning
+              ? 'bg-red-500 hover:bg-red-600'
+              : 'bg-teal-500 hover:bg-teal-600'
+          }`}
+        >
+          {isScanning ? 'Stop Engine' : 'Start Engine'}
+        </button>
       </div>
 
       <ScannerStats

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Images, Coins, FileTerminal, Binary, KeyRound, Heart, Copy, Check, Radar } from 'lucide-react';
+import { Images, Coins, FileTerminal, Binary, KeyRound, Heart, Copy, Check, Radar, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from './AppContext';
@@ -34,32 +34,12 @@ export default function Sidebar() {
         }`}
       >
         <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto no-scrollbar pt-6">
-          <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider px-3 mb-2 font-sans">
-            Active Module
-          </p>
-          
-          <Link 
-            href="/erc721scanner"
-            onClick={handleNavClick}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc721scanner') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
-          >
-            <Images size={16} />
-            <span>ERC721 Scanner</span>
-          </Link>
-          <Link 
-            href="/erc20scanner"
-            onClick={handleNavClick}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc20scanner') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
-          >
-            <Coins size={16} />
-            <span>ERC20 Scanner</span>
-          </Link>
-
-          <div className="pt-4">
+          <div>
             <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider px-3 mb-2 font-sans">
               Integrations
             </p>
             {[
+              { id: 'portfolio', name: 'Portfolio', icon: Search },
               { id: 'walletgenerator', name: 'Wallet Generator', icon: KeyRound },
               { id: 'balancechecker', name: 'Balance Checker', icon: FileTerminal },
               { id: 'multisender', name: 'Multisender', icon: Binary },
@@ -75,6 +55,30 @@ export default function Sidebar() {
                 <span>{item.name}</span>
               </Link>
             ))}
+          </div>
+
+          <div className="pt-4">
+            <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider px-3 mb-2 font-sans">
+              Active Module
+            </p>
+            <div className="space-y-1.5">
+              <Link 
+                href="/erc721scanner"
+                onClick={handleNavClick}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc721scanner') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
+              >
+                <Images size={16} />
+                <span>ERC721 Scanner</span>
+              </Link>
+              <Link 
+                href="/erc20scanner"
+                onClick={handleNavClick}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc20scanner') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
+              >
+                <Coins size={16} />
+                <span>ERC20 Scanner</span>
+              </Link>
+            </div>
           </div>
         </nav>
 

@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { AppContextProvider } from "./components/AppContext";
 import AppLayout from "./components/AppLayout";
 
-const inter = Inter({ subsets: ["latin"] });
+const ibmPlexMono = IBM_Plex_Mono({ 
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ibm-plex"
+});
 
 export const metadata: Metadata = {
   title: "Hand of Naire",
@@ -19,7 +23,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.className} h-full antialiased`}
+      className={`${ibmPlexMono.variable} ${ibmPlexMono.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <AppContextProvider>
