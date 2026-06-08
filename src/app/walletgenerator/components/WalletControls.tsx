@@ -50,34 +50,36 @@ export default function WalletControls({
       </div>
 
       {!isVanityMode ? (
-        <div className="flex items-end gap-4">
-          <div className="flex-1 space-y-2">
-            <label className="text-sm font-medium">Number of Wallets</label>
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+          <div className="flex-1 space-y-2 w-full">
+            <label className="text-sm font-medium block">Number of Wallets</label>
             <input
               type="number"
               value={count}
               onChange={(e) => setCount(Number(e.target.value))}
               min="1"
               max="1000"
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500 text-base"
             />
           </div>
-          <button
-            onClick={() => onGenerate(count)}
-            className="bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-2 rounded-[1px] transition-colors"
-          >
-            Generate
-          </button>
-          <button
-            onClick={onExport}
-            className="border border-[var(--border-color)] hover:bg-[var(--bg-surface)] font-medium px-6 py-2 rounded-[1px] transition-colors"
-          >
-            Export .txt
-          </button>
+          <div className="flex gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => onGenerate(count)}
+              className="flex-1 sm:flex-initial bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px] whitespace-nowrap"
+            >
+              Generate
+            </button>
+            <button
+              onClick={onExport}
+              className="flex-1 sm:flex-initial border border-[var(--border-color)] hover:bg-[var(--bg-surface)] font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px] whitespace-nowrap"
+            >
+              Export .txt
+            </button>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Prefix (e.g. 0xabc)</label>
               <input
@@ -111,25 +113,25 @@ export default function WalletControls({
               Case Sensitive
             </label>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             {!isGeneratingVanity ? (
               <button
                 onClick={() => onStartVanity({ prefix, suffix, isCaseSensitive })}
-                className="flex-1 bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-2 rounded-[1px] transition-colors"
+                className="w-full sm:flex-1 bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px]"
               >
                 Start Brute Force
               </button>
             ) : (
               <button
                 onClick={onStopVanity}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium px-6 py-2 rounded-[1px] transition-colors"
+                className="w-full sm:flex-1 bg-red-500 hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px]"
               >
                 Stop
               </button>
             )}
             <button
               onClick={onExport}
-              className="border border-[var(--border-color)] hover:bg-[var(--bg-surface)] font-medium px-6 py-2 rounded-[1px] transition-colors"
+              className="w-full sm:w-auto border border-[var(--border-color)] hover:bg-[var(--bg-surface)] font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px]"
             >
               Export .txt
             </button>

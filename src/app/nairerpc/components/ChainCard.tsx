@@ -62,7 +62,7 @@ export default function ChainCard({ chain }: { chain: ChainData }) {
 
       <button
         onClick={() => addNetworkToWallet(chain, fastestRpc)}
-        className="w-full mt-2 flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-[1px] text-sm transition-colors font-medium"
+        className="w-full mt-2 flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-[1px] text-sm transition-colors font-medium cursor-pointer"
       >
         <PlusCircle className="w-4 h-4" /> Add Network
       </button>

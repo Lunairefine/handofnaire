@@ -9,11 +9,11 @@ interface BalanceControlsProps {
 
 export default function BalanceControls({ onCheck, onClear, isLoading, hasData }: BalanceControlsProps) {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
       <button
         onClick={onCheck}
         disabled={isLoading}
-        className="flex-1 md:flex-none bg-teal-500 hover:bg-teal-600 disabled:bg-teal-500/50 text-white font-medium px-8 py-2.5 rounded-[1px] transition-colors flex items-center justify-center min-w-[160px]"
+        className="w-full sm:w-auto bg-teal-500 hover:bg-teal-600 disabled:bg-teal-500/50 text-white font-medium px-8 py-2.5 rounded-[1px] transition-colors flex items-center justify-center cursor-pointer min-h-[42px]"
       >
         {isLoading ? (
           <div className="flex items-center gap-2">
@@ -30,7 +30,7 @@ export default function BalanceControls({ onCheck, onClear, isLoading, hasData }
       <button
         onClick={onClear}
         disabled={isLoading || !hasData}
-        className="flex-1 md:flex-none border border-[var(--border-color)] hover:bg-[var(--bg-surface)] disabled:opacity-50 font-medium px-8 py-2.5 rounded-[1px] transition-colors"
+        className="w-full sm:w-auto border border-[var(--border-color)] hover:bg-[var(--bg-surface)] disabled:opacity-50 font-medium px-8 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px]"
       >
         Clear
       </button>

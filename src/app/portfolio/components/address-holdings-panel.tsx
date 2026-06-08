@@ -113,20 +113,21 @@ export default function AddressHoldingsPanel({
   return (
     <div className="divide-y divide-foreground/5">
       {holdingsSummary.nativeAsset ? (
-        <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 overflow-hidden">
+        <div className="flex items-center justify-between py-4 gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 overflow-hidden flex-shrink-0">
               <img 
                 src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/icon/eth.png" 
                 alt="ETH" 
                 className="h-full w-full object-cover"
               />
             </div>
-            <div>
-              <p className="text-[13px] font-semibold text-foreground">ETH</p>
+            <div className="min-w-0">
+              <p className="text-[13px] font-semibold text-foreground truncate">ETH</p>
+              <p className="text-[11px] text-zinc-500 truncate">Ethereum</p>
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-right flex-shrink-0">
             <p className="text-[13px] font-semibold text-foreground">
               {formatTokenAmount(
                 holdingsSummary.nativeAsset.balance,
@@ -146,29 +147,34 @@ export default function AddressHoldingsPanel({
         return (
           <div
             key={`${token.address}-${token.id}`}
-            className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"
+            className="flex items-center justify-between py-4 gap-4"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               {token.icon ? (
                 <img
                   src={token.icon}
                   alt={token.symbol || token.name || "token"}
-                  className="h-8 w-8 rounded-full bg-foreground/5"
+                  className="h-8 w-8 rounded-full bg-foreground/5 flex-shrink-0 object-cover"
                   loading="lazy"
                 />
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-[10px] text-zinc-500">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-[10px] text-zinc-500 flex-shrink-0">
                   N/A
                 </div>
               )}
-              <div>
-                <p className="text-[13px] font-semibold text-foreground">
+              <div className="min-w-0">
+                <p className="text-[13px] font-semibold text-foreground truncate">
                   {token.displaySymbol || token.symbol || "Unknown"}
                 </p>
+                {token.name && token.name !== token.symbol && (
+                  <p className="text-[11px] text-zinc-500 truncate max-w-[120px] sm:max-w-[200px]">
+                    {token.name}
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="text-right">
+            <div className="text-right flex-shrink-0">
               <p className="text-[13px] font-semibold text-foreground">{tokenAmount}</p>
               <p className="text-[11px] text-zinc-500">{formatUsd(getTokenUsdValue(token))}</p>
             </div>

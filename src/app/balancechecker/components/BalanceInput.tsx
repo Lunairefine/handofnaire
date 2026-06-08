@@ -17,7 +17,7 @@ export default function BalanceInput({ value, onChange, disabled }: BalanceInput
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          placeholder="0x...\n0x...\nEnter addresses (one per line, max 50)"
+          placeholder="0xaddress (one per line, max 50)"
           className="w-full h-48 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] p-4 font-sans text-sm resize-none focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:opacity-50"
         />
       </div>
