@@ -3,14 +3,15 @@ import { ethers } from 'ethers';
 import { MintTransaction } from '@/types';
 import { detectMintFunction, analyzeMintType } from '@/parser/abi';
 import { useAppContext } from '@/app/components/AppContext';
+import { resolveFunctionSignature } from '@/services/blockExplorer';
 
 export function useMintScanner(mode: string = 'ERC721') {
-  const { isScanning } = useAppContext();
+  const { isScanning, setIsScanning, customRpcUrl } = useAppContext();
   const [transactions, setTransactions] = useState<MintTransaction[]>([]);
   const [blocksScanned, setBlocksScanned] = useState<number>(0);
   const [activeMintsCount, setActiveMintsCount] = useState<number>(0);
   const [latestBlock, setLatestBlock] = useState<number>(0);
-  const [status, setStatus] = useState<string>('Initializing scanner...');
+  const [status, setStatus] = useState<string>('Initializing...');
   const [tps, setTps] = useState<number>(0);
 
   const scannedTxHashes = useRef<Set<string>>(new Set());
@@ -21,12 +22,21 @@ export function useMintScanner(mode: string = 'ERC721') {
     isScanningRef.current = isScanning;
   }, [isScanning]);
 
+  // Reset scanning status when moving between routes
+  useEffect(() => {
+    setIsScanning(false);
+    return () => {
+      setIsScanning(false);
+    };
+  }, [setIsScanning]);
+
   useEffect(() => {
     let pollingTimeout: NodeJS.Timeout;
 
     if (isScanning) {
-      setTimeout(() => setStatus(`Connecting to Ethereum Mainnet (${mode})...`), 0);
-      const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
+      setTimeout(() => setStatus('Connecting...'), 0);
+      const defaultRpc = process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
+      const rpcUrl = customRpcUrl || defaultRpc;
       const provider = new ethers.JsonRpcProvider(rpcUrl, undefined, { staticNetwork: true });
 
       const pollBlock = async () => {
@@ -38,11 +48,11 @@ export function useMintScanner(mode: string = 'ERC721') {
             const prevBlock = lastBlockRef.current;
             lastBlockRef.current = blockNumber;
             
-            const startScan = prevBlock === 0 ? blockNumber - 1 : blockNumber;
+            const startScan = prevBlock === 0 ? blockNumber - 1 : prevBlock + 1;
             const endScan = blockNumber;
 
             for (let b = startScan; b <= endScan; b++) {
-              setStatus(`Scanning block #${b}...`);
+              setStatus('Scanning...');
               
               const topics = mode === 'ERC721' ? [
                 [
@@ -56,11 +66,21 @@ export function useMintScanner(mode: string = 'ERC721') {
                 ]
               ];
 
-              const logs = (await provider.getLogs({
-                fromBlock: b,
-                toBlock: b,
-                topics
-              })) as ethers.Log[];
+              let logs: ethers.Log[];
+              try {
+                logs = (await provider.getLogs({
+                  fromBlock: b,
+                  toBlock: b,
+                  topics
+                })) as ethers.Log[];
+              } catch (err: any) {
+                if (err.message && err.message.toLowerCase().includes('extends beyond current head block')) {
+                  console.warn(`RPC lag detected at block #${b}. Will retry next tick.`);
+                  lastBlockRef.current = b - 1;
+                  break;
+                }
+                throw err;
+              }
 
               if (logs.length === 0) {
                 console.log(`No mint logs found in block #${b}`);
@@ -120,8 +140,16 @@ export function useMintScanner(mode: string = 'ERC721') {
                     const priceVal = parseFloat(ethValue) / quantity;
                     
                     const detection = detectMintFunction(tx.data);
-                    const functionName = detection.isMint ? detection.functionName : 'mint()';
-                    const selector = detection.isMint ? detection.selector : (tx.data.length >= 10 ? tx.data.substring(0, 10) : '0x');
+                    let functionName = detection.functionName;
+                    const selector = detection.selector;
+                    
+                    if (functionName.startsWith('Unknown') && tx.to && tx.to !== '0x') {
+                      const resolved = await resolveFunctionSignature(tx.to, selector);
+                      if (resolved) {
+                        functionName = resolved;
+                      }
+                    }
+                    
                     const mintType = analyzeMintType(functionName, tx.value, tx.from);
                     const contractAddress = ethers.getAddress(logsForTx[0].address);
 
@@ -158,12 +186,12 @@ export function useMintScanner(mode: string = 'ERC721') {
               setBlocksScanned(prev => prev + 1);
               setTps(parseFloat((uniqueHashes.length / 12).toFixed(2)));
             }
-            setStatus(`Live. Synced to #${blockNumber}. Monitoring...`);
+            setStatus('Monitoring');
           }
         } catch (error: unknown) {
           console.error('RPC Error details:', error);
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          setStatus(`RPC Connection Issue: ${errorMessage}. Retrying...`);
+          setStatus('Retrying...');
         }
         
         pollingTimeout = setTimeout(pollBlock, 5000);

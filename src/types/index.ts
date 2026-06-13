@@ -24,9 +24,6 @@ export interface ContractMetadata {
   owner: string;
   mintStatus: 'Active' | 'Paused' | 'Ended';
   availableMint: string;
-  isOwnable: boolean;
-  isPausable: boolean;
-  isERC721A: boolean;
-  hasMerkleWhitelist: boolean;
+  imageUrl?: string;
 }
 

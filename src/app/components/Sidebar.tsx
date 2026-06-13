@@ -73,20 +73,20 @@ export default function Sidebar() {
             </p>
             <div className="space-y-1.5">
               <Link 
-                href="/erc721scanner"
+                href="/erc721"
                 onClick={handleNavClick}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc721scanner') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc721') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
               >
                 <Images size={16} />
-                <span>ERC721 Scanner</span>
+                <span>ERC721</span>
               </Link>
               <Link 
-                href="/erc20scanner"
+                href="/erc20"
                 onClick={handleNavClick}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc20scanner') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1px] border text-sm font-sans font-semibold text-left transition-colors ${isActive('erc20') ? 'border-teal-500/20 bg-teal-500/5 text-teal-500' : 'border-transparent text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-main)]/50'}`}
               >
                 <Coins size={16} />
-                <span>ERC20 Scanner</span>
+                <span>ERC20</span>
               </Link>
             </div>
           </div>

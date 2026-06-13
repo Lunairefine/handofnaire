@@ -6,12 +6,12 @@ import { getContractMetadata } from '@/services/rpc';
 import { getContractSourceCode } from '@/services/blockExplorer';
 import { extractSolidityFunction } from '@/parser/solidity';
 import { ContractMetadata, MintTransaction } from '@/types';
-import ScannerStats from '@/app/erc20scanner/components/ScannerStats';
-import LiveFeed from '@/app/erc20scanner/components/LiveFeed';
-import ContractDetails from '@/app/erc20scanner/components/ContractDetails';
-import CodeViewer from '@/app/erc20scanner/components/CodeViewer';
+import ScannerStats from '@/app/erc721/components/ScannerStats';
+import LiveFeed from '@/app/erc721/components/LiveFeed';
+import ContractDetails from '@/app/erc721/components/ContractDetails';
+import CodeViewer from '@/app/erc721/components/CodeViewer';
 
-export default function ERC20ScannerPage() {
+export default function ERC721ScannerPage() {
   const {
     transactions,
     blocksScanned,
@@ -22,7 +22,7 @@ export default function ERC20ScannerPage() {
     clearFeed,
     isScanning,
     toggleScanning
-  } = useMintScanner('ERC20');
+  } = useMintScanner('ERC721');
 
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [selectedTx, setSelectedTx] = useState<MintTransaction | null>(null);
@@ -48,15 +48,15 @@ export default function ERC20ScannerPage() {
       setMetadata(meta);
       setIsLoadingMetadata(false);
 
-      const source = await getContractSourceCode(address, meta.name, mintType, tx.functionName);
+      const source = await getContractSourceCode(tx.to, meta.name, mintType, tx.functionName);
       const mintFunction = extractSolidityFunction(source, tx.functionName || 'mint');
       setSolidityCode(mintFunction);
     } catch (e) {
       console.error(e);
       setMetadata({
         address,
-        name: 'Unverified ERC20 Token',
-        symbol: 'TKN',
+        name: 'Unverified Collection',
+        symbol: 'MINT',
         totalSupply: '1420',
         maxSupply: '10000',
         mintPrice: priceGuess,
@@ -65,7 +65,7 @@ export default function ERC20ScannerPage() {
         availableMint: '8580',
         isOwnable: false,
         isPausable: false,
-        isERC721A: false,
+        isERC721A: true,
         hasMerkleWhitelist: false
       });
       setSolidityCode('// Source code not verified or rate-limited on Etherscan API\n// Function signature: ' + tx.functionName);
@@ -77,32 +77,14 @@ export default function ERC20ScannerPage() {
 
   return (
     <>
-      <div className="flex justify-between items-start mb-8">
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold font-sans">ERC20 Scanner</h2>
-          <p className="text-[var(--text-secondary)] text-sm font-sans">
-            Realtime transaction monitoring & contract safety auditor
-          </p>
-        </div>
-        <button
-          onClick={toggleScanning}
-          className={`text-xs font-extrabold px-4 py-2 rounded-[1px] cursor-pointer transition-all uppercase tracking-wider text-white ${
-            isScanning
-              ? 'bg-red-500 hover:bg-red-600'
-              : 'bg-teal-500 hover:bg-teal-600'
-          }`}
-        >
-          {isScanning ? 'Stop Engine' : 'Start Engine'}
-        </button>
-      </div>
-
       <ScannerStats
         latestBlock={latestBlock}
         blocksScanned={blocksScanned}
         activeMintsCount={activeMintsCount}
         tps={tps}
         status={status}
-        mode="ERC20"
+        mode="ERC721"
+        toggleScanning={toggleScanning}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mt-6">
@@ -112,7 +94,7 @@ export default function ERC20ScannerPage() {
             selectedAddress={selectedAddress}
             onSelectContract={handleSelectContract}
             onClearFeed={clearFeed}
-            mode="ERC20"
+            mode="ERC721"
           />
         </div>
 
@@ -121,7 +103,7 @@ export default function ERC20ScannerPage() {
             metadata={metadata}
             selectedTx={selectedTx}
             isLoading={isLoadingMetadata}
-            mode="ERC20"
+            mode="ERC721"
           />
           <CodeViewer
             solidityCode={solidityCode}

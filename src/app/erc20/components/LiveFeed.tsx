@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MintTransaction } from '@/types';
 import { shortenAddress, shortenHash, formatTime, getKnownContract } from '@/utils/format';
-import { Eye, Trash2, Shield, User, Globe, Coins, Flame, ExternalLink } from 'lucide-react';
+import { Trash2, Shield, User, Globe, Coins, Flame, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface LiveFeedProps {
   transactions: MintTransaction[];
@@ -27,25 +27,38 @@ export default function LiveFeed({
   mode = 'ERC721'
 }: LiveFeedProps) {
   const [filter, setFilter] = useState<string>('all');
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const filteredTxs = transactions.filter(tx => {
+    const knownContract = getKnownContract(tx.to);
+    if (knownContract?.name === 'UniswapLP' || knownContract?.name === '0 Allowance' || knownContract?.name === 'rwsETH' || knownContract?.name === 'SupernovaLP') return false;
+
     if (filter === 'all') return true;
     return tx.mintType === filter;
   });
 
   return (
-    <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col h-[600px]">
+    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col transition-all ${isOpen ? 'h-[600px]' : 'h-auto'}`}>
       {}
-      <div className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-surface)] shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
-          </span>
-          <h2 className="font-bold text-xs uppercase tracking-wider text-[var(--text-primary)] font-sans">Realtime Mint Stream</h2>
+      <div 
+        className={`p-4 flex justify-between items-center bg-[var(--bg-surface)] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors ${isOpen ? 'border-b border-[var(--border-color)]' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center gap-3">
+          {isOpen ? <ChevronUp size={16} className="text-[var(--text-secondary)]" /> : <ChevronDown size={16} className="text-[var(--text-secondary)]" />}
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+            </span>
+            <h2 className="font-bold text-xs uppercase tracking-wider text-[var(--text-primary)] font-sans">Realtime Mint Stream</h2>
+          </div>
         </div>
         <button
-          onClick={onClearFeed}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClearFeed();
+          }}
           className="text-xs text-[var(--text-secondary)] hover:text-rose-500 transition-colors flex items-center gap-1.5 p-1 px-2 rounded-[1px] hover:bg-rose-500/5 cursor-pointer font-sans border border-transparent hover:border-[var(--border-color)]"
         >
           <Trash2 size={13} />
@@ -54,7 +67,9 @@ export default function LiveFeed({
       </div>
 
       {}
-      <div className="flex border-b border-[var(--border-color)] overflow-x-auto no-scrollbar p-1 gap-1 bg-[var(--bg-main)]/50 shrink-0">
+      {isOpen && (
+        <>
+          <div className="flex border-b border-[var(--border-color)] overflow-x-auto no-scrollbar p-1 gap-1 bg-[var(--bg-main)]/50 shrink-0">
         {['all', 'public', 'whitelist', 'free', 'paid', 'owner'].map(tab => (
           <button
             key={tab}
@@ -91,14 +106,14 @@ export default function LiveFeed({
               <div
                 key={tx.id}
                 onClick={() => onSelectContract(tx)}
-                className={`p-3 border rounded-[1px] transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                className={`p-3 border rounded-[1px] transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-0 sm:gap-3 ${
                   isSelected
                     ? 'border-teal-500 bg-teal-500/5 glow-accent'
                     : 'border-[var(--border-color)] bg-[var(--bg-main)] hover:bg-[var(--bg-surface)]'
                 }`}
               >
                 {}
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 pb-3 sm:pb-0">
                   <div className={`p-2 rounded-[1px] border ${config.bg} ${config.border} ${config.text} shrink-0`}>
                     <TypeIcon size={16} />
                   </div>
@@ -130,18 +145,17 @@ export default function LiveFeed({
                         className="text-teal-500 hover:text-teal-400 font-semibold hover:underline flex items-center gap-0.5"
                       >
                         {shortenHash(tx.hash, 5)}
-                        <ExternalLink size={9} />
                       </a>
                     </div>
 
                     <p className="text-[10px] font-sans text-[var(--text-secondary)] mt-1 font-semibold">
-                      Func: <span className="text-[var(--text-primary)]">{tx.functionName}</span>
+                      Function : <span className="text-[var(--text-primary)]">{tx.functionName.split('(')[0].trim()}</span>
                     </p>
                   </div>
                 </div>
 
                 {}
-                <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-[var(--border-color)]">
+                <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-[var(--border-color)]">
                   <div className="text-left sm:text-right font-sans">
                     <span className="text-xs font-bold text-[var(--text-primary)]">
                       {tx.quantity} {mode === 'ERC721' ? `NFT${tx.quantity > 1 ? 's' : ''}` : 'Tokens'}
@@ -150,21 +164,14 @@ export default function LiveFeed({
                       {parseFloat(tx.value) === 0 ? 'FREE' : `${tx.value} ETH`}
                     </p>
                   </div>
-                  <button
-                    className={`p-1.5 rounded-[1px] border ${
-                      isSelected
-                        ? 'bg-teal-500/10 border-teal-500/30 text-teal-500'
-                        : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:text-teal-500 hover:bg-[var(--bg-surface)]'
-                    } transition-all`}
-                  >
-                    <Eye size={12} />
-                  </button>
                 </div>
               </div>
             );
           })
         )}
       </div>
+        </>
+      )}
     </div>
   );
 }

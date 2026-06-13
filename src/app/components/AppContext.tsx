@@ -7,8 +7,11 @@ interface AppContextType {
   toggleTheme: () => void;
   isScanning: boolean;
   toggleScanning: () => void;
+  setIsScanning: React.Dispatch<React.SetStateAction<boolean>>;
   isMobileMenuOpen: boolean;
   setMobileMenuOpen: (isOpen: boolean) => void;
+  customRpcUrl: string;
+  setCustomRpcUrl: (url: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -17,15 +20,20 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [customRpcUrl, setCustomRpcUrlState] = useState<string>('');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
     if (savedTheme) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme(savedTheme);
       document.documentElement.classList.toggle('dark', savedTheme === 'dark');
     } else {
       document.documentElement.classList.add('dark');
+    }
+
+    const savedRpc = localStorage.getItem('customRpcUrl');
+    if (savedRpc) {
+      setCustomRpcUrlState(savedRpc);
     }
   }, []);
 
@@ -38,8 +46,22 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 
   const toggleScanning = () => setIsScanning(prev => !prev);
 
+  const setCustomRpcUrl = (url: string) => {
+    setCustomRpcUrlState(url);
+    if (url) {
+      localStorage.setItem('customRpcUrl', url);
+    } else {
+      localStorage.removeItem('customRpcUrl');
+    }
+  };
+
   return (
-    <AppContext.Provider value={{ theme, toggleTheme, isScanning, toggleScanning, isMobileMenuOpen, setMobileMenuOpen }}>
+    <AppContext.Provider value={{ 
+      theme, toggleTheme, 
+      isScanning, toggleScanning, setIsScanning, 
+      isMobileMenuOpen, setMobileMenuOpen,
+      customRpcUrl, setCustomRpcUrl
+    }}>
       {children}
     </AppContext.Provider>
   );

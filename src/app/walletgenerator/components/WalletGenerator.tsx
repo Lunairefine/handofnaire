@@ -46,7 +46,7 @@ export default function WalletGenerator() {
 
   const handleExport = () => {
     if (wallets.length === 0) return
-    const content = wallets.map((w) => `${w.privateKey} | ${w.address}`).join('\n')
+    const content = wallets.map((w) => `${w.address},${w.privateKey}`).join('\n')
     downloadTxt(content, `wallets_${new Date().getTime()}.txt`)
   }
 

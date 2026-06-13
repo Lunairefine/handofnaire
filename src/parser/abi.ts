@@ -16,16 +16,30 @@ export const MINT_SIGNATURES: Record<string, string> = {
   '0x3d0b2dbb': 'claimNFT(uint256)',
 };
 
+export const OTHER_SIGNATURES: Record<string, string> = {
+  '0xa9059cbb': 'transfer(address,uint256)',
+  '0x23b872dd': 'transferFrom(address,address,uint256)',
+  '0x42842e0e': 'safeTransferFrom(address,address,uint256)',
+  '0xb88d4fde': 'safeTransferFrom(address,address,uint256,bytes)',
+  '0x3593564c': 'execute(bytes,bytes[])',
+  '0xb15112a0': 'execute(bytes,bytes[],uint256)',
+  '0x11132000': 'batchMint(address[],uint256[])',
+  '0x722713f7': 'airdrop(address[],uint256[])',
+  '0xd0e30db0': 'deposit()',
+  '0x2e1a7d4d': 'withdraw(uint256)'
+};
+
 /**
  * Detects if a transaction is a mint transaction based on the first 4 bytes of input data.
  * @param input The transaction data hex string (tx.data)
  */
 export function detectMintFunction(input: string): { isMint: boolean; selector: string; functionName: string } {
   if (!input || input === '0x' || input.length < 10) {
-    return { isMint: false, selector: '0x', functionName: '' };
+    return { isMint: false, selector: '0x', functionName: 'Fallback/Transfer' };
   }
 
   const selector = input.substring(0, 10).toLowerCase();
+  
   if (MINT_SIGNATURES[selector]) {
     return {
       isMint: true,
@@ -34,7 +48,15 @@ export function detectMintFunction(input: string): { isMint: boolean; selector: 
     };
   }
 
-  return { isMint: false, selector, functionName: '' };
+  if (OTHER_SIGNATURES[selector]) {
+    return {
+      isMint: false,
+      selector,
+      functionName: OTHER_SIGNATURES[selector],
+    };
+  }
+
+  return { isMint: false, selector, functionName: `Unknown (${selector})` };
 }
 
 /**

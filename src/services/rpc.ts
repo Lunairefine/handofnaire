@@ -10,6 +10,7 @@ const ERC721_ABI = [
   'function MAX_SUPPLY() view returns (uint256)',
   'function owner() view returns (address)',
   'function paused() view returns (bool)',
+  'function contractURI() view returns (string)',
 ];
 
 const RANDOM_NAMES = [
@@ -36,25 +37,19 @@ export async function getContractMetadata(
   const mockName = RANDOM_NAMES[seed % RANDOM_NAMES.length] + ' #' + (seed % 100);
   const mockSymbol = RANDOM_SYMBOLS[seed % RANDOM_SYMBOLS.length];
   
-  const mockTotalSupply = (2000 + (seed % 3500)).toString();
-  const mockMaxSupply = (seed % 2 === 0 ? 5555 : 10000).toString();
   const mockOwner = '0x' + address.slice(2, 6) + 'e81a' + '...'.repeat(2) + address.slice(-4);
-  const mockAvailable = (parseInt(mockMaxSupply) - parseInt(mockTotalSupply)).toString();
 
   const baseResult: ContractMetadata = {
     address,
     name: mockName,
     symbol: mockSymbol,
-    totalSupply: mockTotalSupply,
-    maxSupply: mockMaxSupply,
+    totalSupply: '0',
+    maxSupply: 'Unknown',
     mintPrice,
     owner: mockOwner,
     mintStatus: 'Active' as const,
-    availableMint: mockAvailable,
-    isOwnable: seed % 3 !== 0,
-    isPausable: seed % 4 === 0,
-    isERC721A: seed % 2 === 0,
-    hasMerkleWhitelist: seed % 3 === 0,
+    availableMint: 'Unknown',
+    imageUrl: `https://effigy.im/a/${address}.svg`
   };
 
   try {
@@ -95,32 +90,43 @@ export async function getContractMetadata(
     } catch {}
 
     let owner = baseResult.owner;
-    let isOwnable = baseResult.isOwnable;
     try {
       const ow = await fetchWithTimeout<string | null>(contract.owner(), null);
       if (ow) {
         owner = ow;
-        isOwnable = true;
       }
     } catch {}
 
     let mintStatus: 'Active' | 'Paused' | 'Ended' = 'Active';
-    let isPausable = baseResult.isPausable;
     try {
       const paused = await fetchWithTimeout<boolean | null>(contract.paused(), null);
       if (paused !== null) {
         mintStatus = paused ? 'Paused' : 'Active';
-        isPausable = true;
+      }
+    } catch {}
+
+    let imageUrl = baseResult.imageUrl;
+    try {
+      const uri = await fetchWithTimeout<string | null>(contract.contractURI(), null);
+      if (uri) {
+        let fetchUrl = uri;
+        if (uri.startsWith('ipfs://')) fetchUrl = uri.replace('ipfs://', 'https://ipfs.io/ipfs/');
+        const metaRes = await fetchWithTimeout(fetch(fetchUrl).then(r => r.json()), null);
+        if (metaRes && metaRes.image) {
+          imageUrl = metaRes.image.startsWith('ipfs://') ? metaRes.image.replace('ipfs://', 'https://ipfs.io/ipfs/') : metaRes.image;
+        }
       }
     } catch {}
 
     const totalInt = parseInt(totalSupply);
     const maxInt = parseInt(maxSupply);
-    if (totalInt >= maxInt && maxInt > 0) {
+    if (!isNaN(totalInt) && !isNaN(maxInt) && totalInt >= maxInt && maxInt > 0) {
       mintStatus = 'Ended';
     }
 
-    const availableMint = maxInt > totalInt ? (maxInt - totalInt).toString() : '0';
+    const availableMint = (!isNaN(maxInt) && !isNaN(totalInt)) && maxInt > totalInt 
+      ? (maxInt - totalInt).toString() 
+      : 'Unknown';
 
     return {
       address,
@@ -132,10 +138,7 @@ export async function getContractMetadata(
       owner,
       mintStatus,
       availableMint,
-      isOwnable,
-      isPausable,
-      isERC721A: baseResult.isERC721A, 
-      hasMerkleWhitelist: baseResult.hasMerkleWhitelist, 
+      imageUrl
     };
   } catch {
     return baseResult;
