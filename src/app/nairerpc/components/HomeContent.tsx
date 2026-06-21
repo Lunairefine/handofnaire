@@ -35,7 +35,7 @@ export default function HomeContent() {
       <div className="space-y-2 mb-8">
         <h2 className="text-3xl font-bold font-sans text-[var(--text-primary)]">RPC Scanner</h2>
         <p className="text-[var(--text-secondary)] text-sm font-sans max-w-2xl">
-          Agregator RPC Publik dengan Pemilihan Otomatis & Tercepat.
+          Public RPC Aggregator with Automatic & Fastest Selection.
         </p>
       </div>
       

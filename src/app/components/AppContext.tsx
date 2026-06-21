@@ -10,6 +10,8 @@ interface AppContextType {
   setIsScanning: React.Dispatch<React.SetStateAction<boolean>>;
   isMobileMenuOpen: boolean;
   setMobileMenuOpen: (isOpen: boolean) => void;
+  isDesktopCollapsed: boolean;
+  setDesktopCollapsed: (collapsed: boolean) => void;
   customRpcUrl: string;
   setCustomRpcUrl: (url: string) => void;
 }
@@ -20,6 +22,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [isDesktopCollapsed, setDesktopCollapsed] = useState<boolean>(false);
   const [customRpcUrl, setCustomRpcUrlState] = useState<string>('');
 
   useEffect(() => {
@@ -60,6 +63,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
       theme, toggleTheme, 
       isScanning, toggleScanning, setIsScanning, 
       isMobileMenuOpen, setMobileMenuOpen,
+      isDesktopCollapsed, setDesktopCollapsed,
       customRpcUrl, setCustomRpcUrl
     }}>
       {children}

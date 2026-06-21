@@ -22,7 +22,7 @@ export default function AddressPortfolioSection({
 
   return (
     <section className="w-full py-4 sm:py-6">
-      <div className="flex items-center gap-8 border-b border-foreground/10 pb-3">
+      <div className="flex items-center gap-8 border-b border-[var(--border-color)] pb-3">
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;
 
@@ -52,10 +52,10 @@ export default function AddressPortfolioSection({
           <AddressHoldingsPanel address={address} />
         </div>
         <div className={activeTab === "flow" ? "block" : "hidden"}>
-          <AddressFlowPanel address={address} isActive={activeTab === "flow"} />
+          <AddressFlowPanel address={address} />
         </div>
         <div className={activeTab === "reward" ? "block" : "hidden"}>
-          <AddressRewardsPanel address={address} isActive={activeTab === "reward"} />
+          <AddressRewardsPanel address={address} />
         </div>
       </div>
     </section>

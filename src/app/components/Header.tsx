@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sun, Moon, Menu, X, Database } from 'lucide-react';
+import { Menu, X, Database } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAppContext } from './AppContext';
 
 export default function Header() {
-  const { theme, toggleTheme, isMobileMenuOpen, setMobileMenuOpen, customRpcUrl, setCustomRpcUrl } = useAppContext();
+  const { theme, isMobileMenuOpen, setMobileMenuOpen, customRpcUrl, setCustomRpcUrl } = useAppContext();
   const [rpcInputOpen, setRpcInputOpen] = useState(false);
 
   return (
@@ -50,14 +50,6 @@ export default function Header() {
             <Database size={14} />
           </button>
         </div>
-
-        <button
-          onClick={toggleTheme}
-          className="p-1.5 rounded-[1px] border border-[var(--border-color)] bg-[var(--bg-surface)] hover:text-teal-500 cursor-pointer text-[var(--text-primary)]"
-          aria-label="Toggle Theme"
-        >
-          {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
-        </button>
       </div>
     </header>
   );

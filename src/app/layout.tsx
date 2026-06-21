@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AppContextProvider } from "./components/AppContext";
 import AppLayout from "./components/AppLayout";
 
-const ibmPlexMono = IBM_Plex_Mono({ 
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-ibm-plex"
+const innovatorGrostek = localFont({
+  src: "../../public/media/font/innovatorGrostek.woff2",
+  variable: "--font-innovator"
 });
 
 const helveticaNeue = localFont({
@@ -29,8 +27,24 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${ibmPlexMono.variable} ${helveticaNeue.variable} ${helveticaNeue.className} h-full antialiased`}
+      className={`${innovatorGrostek.variable} ${helveticaNeue.variable} ${innovatorGrostek.className} h-full antialiased dark`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.theme === 'light') {
+                  document.documentElement.classList.remove('dark');
+                } else {
+                  document.documentElement.classList.add('dark');
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <AppContextProvider>
           <AppLayout>

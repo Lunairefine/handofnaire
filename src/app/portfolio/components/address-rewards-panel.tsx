@@ -1,44 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { isValidAddress } from "@/app/portfolio/lib/holdings";
 
 type AddressRewardsPanelProps = {
   address: string;
-  isActive?: boolean;
 };
 
 export default function AddressRewardsPanel({ 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  address, 
-  isActive 
+  address 
 }: AddressRewardsPanelProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasFetched, setHasFetched] = useState(false);
-
-  useEffect(() => {
-    if (!isActive || hasFetched) return;
-    
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setHasFetched(true);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, [isActive, hasFetched]);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {[1, 2].map((i) => (
-          <div key={i} className="h-20 rounded-2xl bg-foreground/[0.04] animate-pulse" />
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">

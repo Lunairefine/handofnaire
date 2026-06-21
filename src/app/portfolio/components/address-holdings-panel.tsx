@@ -111,7 +111,7 @@ export default function AddressHoldingsPanel({
   }
 
   return (
-    <div className="divide-y divide-foreground/5">
+    <div className="divide-y divide-[var(--border-color)]">
       {holdingsSummary.nativeAsset ? (
         <div className="flex items-center justify-between py-2 gap-4">
           <div className="flex items-center gap-3 min-w-0">

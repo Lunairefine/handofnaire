@@ -12,7 +12,6 @@ import { useAppContext } from "@/app/components/AppContext";
 
 type AddressFlowPanelProps = {
   address: string;
-  isActive?: boolean;
 };
 
 const formatTimeAgo = (value?: string) => {
@@ -32,7 +31,7 @@ const formatTimeAgo = (value?: string) => {
 const getEtherscanTxUrl = (hash?: string) =>
   hash ? `https://etherscan.io/tx/${hash}` : null;
 
-export default function AddressFlowPanel({ address, isActive }: AddressFlowPanelProps) {
+export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
   const { theme } = useAppContext();
   const [transactions, setTransactions] = useState<BlockscoutTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +39,7 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
   const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
-    if (!isActive || hasFetched) return;
+    if (hasFetched) return;
 
     let isMounted = true;
 
@@ -99,7 +98,7 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
     return () => {
       isMounted = false;
     };
-  }, [address, isActive, hasFetched]);
+  }, [address, hasFetched]);
 
   if (isLoading) {
     return (
@@ -128,7 +127,7 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
   }
 
   return (
-    <div className="divide-y divide-foreground/5">
+    <div className="divide-y divide-[var(--border-color)]" style={{ fontFamily: "var(--font-helvetica), sans-serif" }}>
       {transactions.slice(0, 20).map((transaction) => {
         const fromHash = transaction.from?.hash?.toLowerCase();
         const normalizedAddress = address.toLowerCase();
@@ -197,7 +196,6 @@ export default function AddressFlowPanel({ address, isActive }: AddressFlowPanel
               <div className="flex items-center gap-1.5 px-0 py-0.5">
                 <span 
                   className="text-[11px] font-bold text-zinc-500 lowercase tracking-wider whitespace-nowrap"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
                 >
                   {(() => {
                     const isMethod = !!transaction.method;

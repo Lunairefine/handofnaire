@@ -9,7 +9,7 @@ interface BalanceInputProps {
 export default function BalanceInput({ value, onChange, disabled }: BalanceInputProps) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-[var(--text-primary)]">
+      <label className="block text-sm font-medium text-[var(--text-primary)] mb-4">
         Wallet Addresses
       </label>
       <div className="relative">

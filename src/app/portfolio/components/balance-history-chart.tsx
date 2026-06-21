@@ -21,18 +21,21 @@ const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 const buildChart = (history: BalanceSnapshot[], windowStart: number) => {
   const series = history;
-  const totals = series.map((item) => item.totalUsd);
-  const min = Math.min(...totals);
-  const max = Math.max(...totals);
-  const range = max - min || 0.0001; 
+  const initialValue = series.length > 0 ? series[0].totalUsd : 0;
+  
+  const diffs = series.map((item) => Math.abs(item.totalUsd - initialValue));
+  let maxAbsDiff = Math.max(...diffs);
+  
+  const minScale = 1; // Batas minimal fluktuasi 1 USD
+  maxAbsDiff = Math.max(maxAbsDiff, minScale);
 
   const points = series.map((item) => {
     const timeRatio = (item.timestamp - windowStart) / ONE_DAY_IN_MS;
     const x = Math.max(0, Math.min(CHART_WIDTH, timeRatio * CHART_WIDTH));
     
-    const y =
-      CHART_HEIGHT - 10 -
-      ((item.totalUsd - min) / range) * (CHART_HEIGHT - 20);
+    const padding = 10;
+    const halfHeight = (CHART_HEIGHT / 2) - padding;
+    const y = (CHART_HEIGHT / 2) - ((item.totalUsd - initialValue) / maxAbsDiff) * halfHeight;
     return { x, y };
   });
 
@@ -106,7 +109,7 @@ export default function BalanceHistoryChart({
         <div className="relative overflow-hidden p-0">
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.01)_1px,transparent_1px)] dark:bg-[linear-gradient(to_bottom,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100%_33%]" />
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-start">
-            <p className="text-3xl font-bold text-foreground">
+            <p className="text-3xl font-black tracking-tight text-foreground">
               {currentTotalUsd === null ? (
                 isLoading ? (
                   <span className="inline-block h-8 w-32 animate-pulse rounded bg-foreground/5 align-middle" />
@@ -127,6 +130,7 @@ export default function BalanceHistoryChart({
             <defs>
               <linearGradient id="balance-area" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0%" stopColor="var(--accent-teal)" stopOpacity="0.3" />
+                <stop offset="80%" stopColor="var(--accent-teal)" stopOpacity="0.2" />
                 <stop offset="100%" stopColor="var(--accent-teal)" stopOpacity="0" />
               </linearGradient>
             </defs>
