@@ -26,7 +26,7 @@ export default function ContractDetails({
   };
   if (!selectedTx) {
     return (
-      <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-6 rounded-[1px] h-[480px] flex flex-col items-center justify-center text-center">
+      <div className="bg-white/[0.03] border border-[var(--border-color)] p-6 rounded-[1px] h-[480px] flex flex-col items-center justify-center text-center">
         <div className="w-12 h-12 border border-dashed border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] mb-3 rounded-[1px]">
           <Compass size={20} className="animate-pulse-slow" />
         </div>
@@ -45,10 +45,10 @@ export default function ContractDetails({
     : 0;
 
   return (
-    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-auto' : 'h-[49px]'}`}>
+    <div className={`bg-white/[0.03] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-auto' : 'h-[49px]'}`}>
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-surface)] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
+        className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-white/[0.03] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
       >
         <div className="flex items-center gap-2">
           <div className="text-[var(--text-secondary)]">
@@ -121,7 +121,7 @@ export default function ContractDetails({
                     {parseInt(metadata.totalSupply).toLocaleString()} / {parseInt(metadata.maxSupply).toLocaleString()} ({progressPercent.toFixed(1)}%)
                   </span>
                 </div>
-                <div className="w-full bg-[var(--bg-surface)] h-1.5 rounded-[1px] overflow-hidden border border-[var(--border-color)]">
+                <div className="w-full bg-white/[0.03] h-1.5 rounded-[1px] overflow-hidden border border-[var(--border-color)]">
                   <div
                     className="bg-teal-500 h-full rounded-[1px] transition-all duration-500"
                     style={{ width: `${progressPercent}%` }}
@@ -135,13 +135,13 @@ export default function ContractDetails({
 
               {}
               <div className="grid grid-cols-2 gap-3 font-sans text-[10px]">
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-2.5 rounded-[1px]">
+                <div className="bg-white/[0.03] border border-[var(--border-color)] p-2.5 rounded-[1px]">
                   <p className="text-[9px] text-[var(--text-secondary)] uppercase">Mint Price</p>
                   <p className="font-bold text-[var(--text-primary)] mt-0.5">
                     {parseFloat(metadata.mintPrice) === 0 ? 'FREE' : `${metadata.mintPrice} ETH`}
                   </p>
                 </div>
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-2.5 rounded-[1px] overflow-hidden">
+                <div className="bg-white/[0.03] border border-[var(--border-color)] p-2.5 rounded-[1px] overflow-hidden">
                   <p className="text-[9px] text-[var(--text-secondary)] uppercase">Contract Owner</p>
                   <p className="font-bold text-[var(--text-primary)] mt-0.5 truncate" title={metadata.owner}>
                     {shortenAddress(metadata.owner, 4)}
@@ -162,7 +162,7 @@ export default function ContractDetails({
                     className={`flex items-center gap-1.5 p-1.5 rounded-[1px] border text-[9px] font-sans ${
                       cap.active
                         ? 'bg-teal-500/5 border-teal-500/20 text-teal-500'
-                        : 'bg-[var(--bg-surface)] border-[var(--border-color)] text-[var(--text-secondary)]'
+                        : 'bg-white/[0.03] border-[var(--border-color)] text-[var(--text-secondary)]'
                     }`}
                   >
                     <Zap size={10} className={cap.active ? 'text-teal-500 shrink-0' : 'text-[var(--text-secondary)] shrink-0'} />

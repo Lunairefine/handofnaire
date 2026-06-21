@@ -28,7 +28,7 @@ export default function ScannerStats({
   const buttonText = isScanning ? 'STOP AUDIT' : 'RUN AUDIT';
 
   return (
-    <div className="mb-6 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] font-mono text-sm text-[var(--text-primary)]">
+    <div className="mb-6 w-full bg-white/[0.03] border border-[var(--border-color)] rounded-[1px] font-mono text-sm text-[var(--text-primary)]">
       {/* Header */}
       <div 
         className={`flex justify-between items-center px-6 py-4 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors ${isOpen ? 'border-b border-[var(--border-color)]' : ''}`}

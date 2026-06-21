@@ -38,10 +38,10 @@ export default function LiveFeed({
   });
 
   return (
-    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col transition-all ${isOpen ? 'h-[600px]' : 'h-auto'}`}>
+    <div className={`bg-white/[0.03] border border-[var(--border-color)] rounded-[1px] flex flex-col transition-all ${isOpen ? 'h-[600px]' : 'h-auto'}`}>
       {}
       <div 
-        className={`p-4 flex justify-between items-center bg-[var(--bg-surface)] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors ${isOpen ? 'border-b border-[var(--border-color)]' : ''}`}
+        className={`p-4 flex justify-between items-center bg-white/[0.03] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors ${isOpen ? 'border-b border-[var(--border-color)]' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex items-center gap-3">
@@ -109,7 +109,7 @@ export default function LiveFeed({
                 className={`p-3 border rounded-[1px] transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-0 sm:gap-3 ${
                   isSelected
                     ? 'border-teal-500 bg-teal-500/5 glow-accent'
-                    : 'border-[var(--border-color)] bg-[var(--bg-main)] hover:bg-[var(--bg-surface)]'
+                    : 'border-[var(--border-color)] bg-[var(--bg-main)] hover:bg-white/[0.03]'
                 }`}
               >
                 {}

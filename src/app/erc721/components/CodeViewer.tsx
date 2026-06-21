@@ -54,11 +54,11 @@ export default function CodeViewer({
   const highlightedHTML = React.useMemo(() => highlightSolidity(solidityCode), [solidityCode]);
 
   return (
-    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-[380px] lg:h-[420px]' : 'h-[56px]'}`}>
+    <div className={`bg-white/[0.03] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-[380px] lg:h-[420px]' : 'h-[56px]'}`}>
       {}
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-surface)] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
+        className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-white/[0.03] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
       >
         <div className="flex items-center gap-2">
           <div className="text-[var(--text-secondary)]">
