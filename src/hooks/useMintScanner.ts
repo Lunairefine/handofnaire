@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { MintTransaction } from '@/types';
 import { detectMintFunction, analyzeMintType } from '@/parser/abi';
-import { useAppContext } from '@/app/components/AppContext';
+import { useAppContext, NETWORK_CONFIG } from '@/app/components/AppContext';
 import { resolveFunctionSignature } from '@/services/blockExplorer';
 
 export function useMintScanner(mode: string = 'ERC721') {
-  const { isScanning, setIsScanning, customRpcUrl } = useAppContext();
+  const { isScanning, setIsScanning, customRpcUrl, activeNetwork } = useAppContext();
   const [transactions, setTransactions] = useState<MintTransaction[]>([]);
   const [blocksScanned, setBlocksScanned] = useState<number>(0);
   const [activeMintsCount, setActiveMintsCount] = useState<number>(0);
@@ -32,14 +32,18 @@ export function useMintScanner(mode: string = 'ERC721') {
 
   useEffect(() => {
     let pollingTimeout: NodeJS.Timeout;
+    let isActive = true;
 
     if (isScanning) {
-      setTimeout(() => setStatus('Connecting...'), 0);
-      const defaultRpc = process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
+      setTimeout(() => { if (isActive) setStatus('Connecting...') }, 0);
+
+      const networkRpc = NETWORK_CONFIG[activeNetwork]?.rpcUrl || 'https://ethereum-rpc.publicnode.com';
+      const defaultRpc = process.env.NEXT_PUBLIC_RPC_URL || networkRpc;
       const rpcUrl = customRpcUrl || defaultRpc;
       const provider = new ethers.JsonRpcProvider(rpcUrl, undefined, { staticNetwork: true });
 
       const pollBlock = async () => {
+        if (!isActive) return;
         try {
           const blockNumber = await provider.getBlockNumber();
           setLatestBlock(blockNumber);
@@ -52,6 +56,7 @@ export function useMintScanner(mode: string = 'ERC721') {
             const endScan = blockNumber;
 
             for (let b = startScan; b <= endScan; b++) {
+              if (!isActive) break;
               setStatus('Scanning...');
               
               const topics = mode === 'ERC721' ? [
@@ -81,6 +86,8 @@ export function useMintScanner(mode: string = 'ERC721') {
                 }
                 throw err;
               }
+
+              if (!isActive) break;
 
               if (logs.length === 0) {
                 console.log(`No mint logs found in block #${b}`);
@@ -120,19 +127,22 @@ export function useMintScanner(mode: string = 'ERC721') {
               });
 
               const blockInfo = await provider.getBlock(b);
+              if (!isActive) break;
               const newTxs: MintTransaction[] = [];
               const uniqueHashes = Array.from(txHashToLogs.keys());
 
               const BATCH_SIZE = 5;
               for (let i = 0; i < uniqueHashes.length; i += BATCH_SIZE) {
+                if (!isActive) break;
                 const batch = uniqueHashes.slice(i, i + BATCH_SIZE);
                 await Promise.all(batch.map(async (hash) => {
                   try {
+                    if (!isActive) return;
                     if (scannedTxHashes.current.has(hash)) return;
                     scannedTxHashes.current.add(hash);
 
                     const tx = await provider.getTransaction(hash);
-                    if (!tx) return;
+                    if (!isActive || !tx) return;
 
                     const logsForTx = txHashToLogs.get(hash)!;
                     const quantity = logsForTx.length;
@@ -144,7 +154,9 @@ export function useMintScanner(mode: string = 'ERC721') {
                     const selector = detection.selector;
                     
                     if (functionName.startsWith('Unknown') && tx.to && tx.to !== '0x') {
-                      const resolved = await resolveFunctionSignature(tx.to, selector);
+                      const networkConfig = NETWORK_CONFIG[activeNetwork] || NETWORK_CONFIG.ethereum;
+                      const resolved = await resolveFunctionSignature(tx.to, selector, networkConfig.blockscoutApiUrl);
+                      if (!isActive) return;
                       if (resolved) {
                         functionName = resolved;
                       }
@@ -193,17 +205,19 @@ export function useMintScanner(mode: string = 'ERC721') {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           setStatus('Retrying...');
         }
-        
-        pollingTimeout = setTimeout(pollBlock, 5000);
+        if (isActive) {
+          pollingTimeout = setTimeout(pollBlock, 5000);
+        }
       };
 
       pollBlock();
     }
 
     return () => {
+      isActive = false;
       if (pollingTimeout) clearTimeout(pollingTimeout);
     };
-  }, [isScanning, mode]);
+  }, [isScanning, mode, activeNetwork, customRpcUrl]);
 
   const clearFeed = useCallback(() => {
     setTransactions([]);

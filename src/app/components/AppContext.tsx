@@ -2,6 +2,35 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+export const NETWORK_CONFIG = {
+  ethereum: {
+    id: 'ethereum',
+    name: 'Ethereum',
+    rpcUrl: 'https://ethereum-rpc.publicnode.com',
+    explorerUrl: 'https://etherscan.io',
+    openseaChain: 'ethereum',
+    blockscoutApiUrl: 'https://eth.blockscout.com',
+  },
+  base: {
+    id: 'base',
+    name: 'Base',
+    rpcUrl: 'https://base-rpc.publicnode.com',
+    explorerUrl: 'https://basescan.org',
+    openseaChain: 'base',
+    blockscoutApiUrl: 'https://base.blockscout.com',
+  },
+  robinhood: {
+    id: 'robinhood',
+    name: 'Robinhood',
+    rpcUrl: 'https://robinhood.api.pocket.network',
+    explorerUrl: 'https://robinhoodchain.blockscout.com',
+    openseaChain: 'robinhood',
+    blockscoutApiUrl: 'https://robinhoodchain.blockscout.com',
+  }
+} as const;
+
+export type Network = keyof typeof NETWORK_CONFIG;
+
 interface AppContextType {
   theme: 'dark' | 'light';
   toggleTheme: () => void;
@@ -14,6 +43,8 @@ interface AppContextType {
   setDesktopCollapsed: (collapsed: boolean) => void;
   customRpcUrl: string;
   setCustomRpcUrl: (url: string) => void;
+  activeNetwork: Network;
+  setActiveNetwork: (network: Network) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -24,6 +55,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [isDesktopCollapsed, setDesktopCollapsed] = useState<boolean>(false);
   const [customRpcUrl, setCustomRpcUrlState] = useState<string>('');
+  const [activeNetwork, setActiveNetworkState] = useState<Network>('ethereum');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
@@ -37,6 +69,11 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
     const savedRpc = localStorage.getItem('customRpcUrl');
     if (savedRpc) {
       setCustomRpcUrlState(savedRpc);
+    }
+    
+    const savedNetwork = localStorage.getItem('activeNetwork') as Network | null;
+    if (savedNetwork) {
+      setActiveNetworkState(savedNetwork);
     }
   }, []);
 
@@ -58,13 +95,19 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
     }
   };
 
+  const setActiveNetwork = (network: Network) => {
+    setActiveNetworkState(network);
+    localStorage.setItem('activeNetwork', network);
+  };
+
   return (
     <AppContext.Provider value={{ 
       theme, toggleTheme, 
       isScanning, toggleScanning, setIsScanning, 
       isMobileMenuOpen, setMobileMenuOpen,
       isDesktopCollapsed, setDesktopCollapsed,
-      customRpcUrl, setCustomRpcUrl
+      customRpcUrl, setCustomRpcUrl,
+      activeNetwork, setActiveNetwork
     }}>
       {children}
     </AppContext.Provider>

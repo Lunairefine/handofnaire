@@ -13,47 +13,36 @@ const ERC721_ABI = [
   'function contractURI() view returns (string)',
 ];
 
-const RANDOM_NAMES = [
-  'HyperSlices', 'Lunaire Cyberpunk', 'Aetheric Monoliths', 'Nomadic Voyagers', 
-  'Gridrunners', 'Holo Shards', 'Cybernetic Flora', 'Quantum Relics', 
-  'Vapor Dreams', 'Chrono Glyphs', 'Neoteric Cubes', 'Solaris Mechs'
-];
-
-const RANDOM_SYMBOLS = [
-  'SLICE', 'LUNAR', 'AETH', 'NMV', 'GRID', 'HOLO', 'FLR', 'QLIC', 'VAPR', 'CHRN', 'NEO', 'SOL'
-];
-
 /**
- * Reads NFT metadata from a contract address using Ethereum RPC.
- * Falls back to highly realistic randomized mock data if RPC fails or is rate-limited.
+ * Reads NFT metadata from a contract address using RPC.
+ * Returns partial data with 'Unknown' labels if RPC calls fail.
  */
 export async function getContractMetadata(
   address: string, 
-  mintPrice: string = '0.05'
+  mintPrice: string = '0.05',
+  rpcUrl?: string
 ): Promise<ContractMetadata> {
-  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
-  
-  const seed = parseInt(address.slice(2, 8), 16) || 0;
-  const mockName = RANDOM_NAMES[seed % RANDOM_NAMES.length] + ' #' + (seed % 100);
-  const mockSymbol = RANDOM_SYMBOLS[seed % RANDOM_SYMBOLS.length];
-  
-  const mockOwner = '0x' + address.slice(2, 6) + 'e81a' + '...'.repeat(2) + address.slice(-4);
+  const finalRpcUrl = rpcUrl || process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
 
-  const baseResult: ContractMetadata = {
+  const fallback: ContractMetadata = {
     address,
-    name: mockName,
-    symbol: mockSymbol,
+    name: 'Unknown',
+    symbol: '???',
     totalSupply: '0',
-    maxSupply: 'Unknown',
+    maxSupply: '0',
     mintPrice,
-    owner: mockOwner,
-    mintStatus: 'Active' as const,
-    availableMint: 'Unknown',
-    imageUrl: `https://effigy.im/a/${address}.svg`
+    owner: '0x0000000000000000000000000000000000000000',
+    mintStatus: 'Active',
+    availableMint: '0',
+    imageUrl: `https://effigy.im/a/${address}.svg`,
+    isOwnable: false,
+    isPausable: false,
+    isERC721A: false,
+    hasMerkleWhitelist: false,
   };
 
   try {
-    const provider = new ethers.JsonRpcProvider(rpcUrl, undefined, { staticNetwork: true });
+    const provider = new ethers.JsonRpcProvider(finalRpcUrl, undefined, { staticNetwork: true });
     
     const contract = new ethers.Contract(address, ERC721_ABI, provider);
 
@@ -64,23 +53,23 @@ export async function getContractMetadata(
       ]);
     };
 
-    let name = baseResult.name;
+    let name = fallback.name;
     try {
-      name = await fetchWithTimeout<string>(contract.name(), baseResult.name);
+      name = await fetchWithTimeout<string>(contract.name(), fallback.name);
     } catch {}
 
-    let symbol = baseResult.symbol;
+    let symbol = fallback.symbol;
     try {
-      symbol = await fetchWithTimeout<string>(contract.symbol(), baseResult.symbol);
+      symbol = await fetchWithTimeout<string>(contract.symbol(), fallback.symbol);
     } catch {}
     
-    let totalSupply = baseResult.totalSupply;
+    let totalSupply = fallback.totalSupply;
     try {
       const ts = await fetchWithTimeout<bigint | null>(contract.totalSupply(), null);
       if (ts !== null) totalSupply = ts.toString();
     } catch {}
 
-    let maxSupply = baseResult.maxSupply;
+    let maxSupply = fallback.maxSupply;
     try {
       let ms = await fetchWithTimeout<bigint | null>(contract.maxSupply(), null);
       if (ms === null) {
@@ -89,7 +78,7 @@ export async function getContractMetadata(
       if (ms !== null) maxSupply = ms.toString();
     } catch {}
 
-    let owner = baseResult.owner;
+    let owner = fallback.owner;
     try {
       const ow = await fetchWithTimeout<string | null>(contract.owner(), null);
       if (ow) {
@@ -97,15 +86,19 @@ export async function getContractMetadata(
       }
     } catch {}
 
+    const isOwnable = owner !== fallback.owner;
+
     let mintStatus: 'Active' | 'Paused' | 'Ended' = 'Active';
+    let isPausable = false;
     try {
       const paused = await fetchWithTimeout<boolean | null>(contract.paused(), null);
       if (paused !== null) {
+        isPausable = true;
         mintStatus = paused ? 'Paused' : 'Active';
       }
     } catch {}
 
-    let imageUrl = baseResult.imageUrl;
+    let imageUrl = fallback.imageUrl;
     try {
       const uri = await fetchWithTimeout<string | null>(contract.contractURI(), null);
       if (uri) {
@@ -126,7 +119,7 @@ export async function getContractMetadata(
 
     const availableMint = (!isNaN(maxInt) && !isNaN(totalInt)) && maxInt > totalInt 
       ? (maxInt - totalInt).toString() 
-      : 'Unknown';
+      : '0';
 
     return {
       address,
@@ -138,9 +131,13 @@ export async function getContractMetadata(
       owner,
       mintStatus,
       availableMint,
-      imageUrl
+      imageUrl,
+      isOwnable,
+      isPausable,
+      isERC721A: false,
+      hasMerkleWhitelist: false,
     };
   } catch {
-    return baseResult;
+    return fallback;
   }
 }

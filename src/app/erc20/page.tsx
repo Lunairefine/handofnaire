@@ -10,6 +10,7 @@ import ScannerStats from '@/app/erc20/components/ScannerStats';
 import LiveFeed from '@/app/erc20/components/LiveFeed';
 import ContractDetails from '@/app/erc20/components/ContractDetails';
 import CodeViewer from '@/app/erc20/components/CodeViewer';
+import { useAppContext, NETWORK_CONFIG } from '@/app/components/AppContext';
 
 export default function ERC20ScannerPage() {
   const {
@@ -32,6 +33,9 @@ export default function ERC20ScannerPage() {
   const [isLoadingMetadata, setIsLoadingMetadata] = useState<boolean>(false);
   const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
 
+  const { activeNetwork } = useAppContext();
+  const networkConfig = NETWORK_CONFIG[activeNetwork] || NETWORK_CONFIG.ethereum;
+
   const handleSelectContract = async (tx: MintTransaction) => {
     setSelectedTx(tx);
     const address = tx.contractAddress;
@@ -44,31 +48,31 @@ export default function ERC20ScannerPage() {
     setIsLoadingCode(true);
 
     try {
-      const meta = await getContractMetadata(address, priceGuess);
+      const meta = await getContractMetadata(address, priceGuess, networkConfig.rpcUrl);
       setMetadata(meta);
       setIsLoadingMetadata(false);
 
-      const source = await getContractSourceCode(address, meta.name, mintType, tx.functionName);
+      const source = await getContractSourceCode(address, meta.name, mintType, tx.functionName, networkConfig.blockscoutApiUrl);
       const mintFunction = extractSolidityFunction(source, tx.functionName || 'mint');
       setSolidityCode(mintFunction);
     } catch (e) {
       console.error(e);
       setMetadata({
         address,
-        name: 'Unverified ERC20 Token',
-        symbol: 'TKN',
-        totalSupply: '1420',
-        maxSupply: '10000',
+        name: 'Unknown ERC20 Token',
+        symbol: '???',
+        totalSupply: '0',
+        maxSupply: '0',
         mintPrice: priceGuess,
-        owner: '0x0000000000000000000000000000000000000000',
+        owner: address,
         mintStatus: 'Active',
-        availableMint: '8580',
+        availableMint: '0',
         isOwnable: false,
         isPausable: false,
         isERC721A: false,
         hasMerkleWhitelist: false
       });
-      setSolidityCode('// Source code not verified or rate-limited on Etherscan API\n// Function signature: ' + tx.functionName);
+      setSolidityCode('// Source code not verified on block explorer\n// Function signature: ' + tx.functionName);
     } finally {
       setIsLoadingMetadata(false);
       setIsLoadingCode(false);

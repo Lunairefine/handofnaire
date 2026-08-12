@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PieChart, Key, Wallet, Send, Activity, Images, Coins, Sun, Moon, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { PieChart, Key, Wallet, Send, Activity, Images, Coins, Sun, Moon, PanelLeftClose, PanelLeftOpen, Store } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from './AppContext';
@@ -81,6 +81,14 @@ export default function Sidebar() {
               >
                 <Images size={16} className="shrink-0" />
                 {!isDesktopCollapsed && <span>ERC721</span>}
+              </Link>
+              <Link 
+                href="/opensea"
+                onClick={handleNavClick}
+                className={`w-full flex items-center ${isDesktopCollapsed ? 'justify-center px-0' : 'gap-3 px-3'} py-2.5 rounded-[1px] border text-[13px] font-sans font-semibold text-left transition-colors ${isActive('opensea') ? 'border-transparent bg-[#9CA3AF] dark:bg-white/10 text-black dark:text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-black dark:hover:text-[var(--text-primary)] hover:bg-[#D1D5DB] dark:hover:bg-white/5'}`}
+              >
+                <Store size={16} className="shrink-0" />
+                {!isDesktopCollapsed && <span>Opensea</span>}
               </Link>
               <Link 
                 href="/erc20"

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MintTransaction } from '@/types';
 import { shortenAddress, shortenHash, formatTime, getKnownContract } from '@/utils/format';
 import { Trash2, Shield, User, Globe, Coins, Flame, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAppContext, NETWORK_CONFIG } from '@/app/components/AppContext';
 
 interface LiveFeedProps {
   transactions: MintTransaction[];
@@ -28,6 +29,9 @@ export default function LiveFeed({
 }: LiveFeedProps) {
   const [filter, setFilter] = useState<string>('all');
   const [isOpen, setIsOpen] = useState<boolean>(true);
+
+  const { activeNetwork } = useAppContext();
+  const networkConfig = NETWORK_CONFIG[activeNetwork] || NETWORK_CONFIG.ethereum;
 
   const filteredTxs = transactions.filter(tx => {
     const knownContract = getKnownContract(tx.to);
@@ -91,7 +95,7 @@ export default function LiveFeed({
           <div className="h-full flex flex-col items-center justify-center text-center p-6">
             <p className="text-xs text-[var(--text-secondary)] font-sans">
               {filter === 'all' 
-                ? 'Waiting for Ethereum blocks & mint transactions...' 
+                ? `Waiting for ${networkConfig.name} blocks & mint transactions...` 
                 : `No recent mints matching filter "${filter}"`}
             </p>
           </div>
@@ -138,7 +142,7 @@ export default function LiveFeed({
                     <div className="flex items-center gap-1.5 mt-0.5 font-sans text-[10px]">
                       <span className="text-[var(--text-secondary)]">Tx Hash:</span>
                       <a
-                        href={`https://etherscan.io/tx/${tx.hash}`}
+                        href={`${networkConfig.explorerUrl}/tx/${tx.hash}`}
                         target="_blank"
                         rel="noreferrer"
                         onClick={(e) => e.stopPropagation()} 

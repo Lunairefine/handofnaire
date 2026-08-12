@@ -10,12 +10,13 @@ export async function getContractSourceCode(
   address: string,
   contractName: string,
   mintType: 'public' | 'whitelist' | 'owner' | 'free' | 'paid',
-  functionName: string = 'mint'
+  functionName: string = 'mint',
+  blockscoutApiUrl: string = 'https://eth.blockscout.com'
 ): Promise<string> {
   try {
     let targetAddress = address;
     
-    const url = `https://eth.blockscout.com/api/v2/smart-contracts/${targetAddress}`;
+    const url = `${blockscoutApiUrl}/api/v2/smart-contracts/${targetAddress}`;
     const res = await fetch(url);
     const data = await res.json();
 
@@ -23,7 +24,7 @@ export async function getContractSourceCode(
     
     if (data.implementations && data.implementations.length > 0) {
       targetAddress = data.implementations[0].address_hash;
-      const implUrl = `https://eth.blockscout.com/api/v2/smart-contracts/${targetAddress}`;
+      const implUrl = `${blockscoutApiUrl}/api/v2/smart-contracts/${targetAddress}`;
       const implRes = await fetch(implUrl);
       const implData = await implRes.json();
       if (implData.source_code) {
@@ -35,7 +36,7 @@ export async function getContractSourceCode(
        return sourceCode;
     }
   } catch (error) {
-    console.error('Failed to fetch from Blockscout:', error);
+    // Suppress console error to avoid cluttering when API is unavailable or blocked by CORS
   }
 
   const cleanName = functionName.split('(')[0].replace(/[^a-zA-Z0-9_]/g, '').trim();
@@ -47,11 +48,15 @@ const signatureCache = new Map<string, string>();
 /**
  * Resolves a function signature from a contract's verified ABI or OpenChain database.
  */
-export async function resolveFunctionSignature(address: string, selector: string): Promise<string | null> {
+export async function resolveFunctionSignature(
+  address: string, 
+  selector: string,
+  blockscoutApiUrl: string = 'https://eth.blockscout.com'
+): Promise<string | null> {
   if (signatureCache.has(selector)) return signatureCache.get(selector)!;
   
   try {
-    const url = `https://eth.blockscout.com/api/v2/smart-contracts/${address}`;
+    const url = `${blockscoutApiUrl}/api/v2/smart-contracts/${address}`;
     const res = await fetch(url);
     const data = await res.json();
     
@@ -68,7 +73,7 @@ export async function resolveFunctionSignature(address: string, selector: string
       }
     }
   } catch (error) {
-    console.error(`Failed to resolve ABI for ${address}:`, error);
+    // Suppress console error to avoid cluttering when API is unavailable or blocked by CORS
   }
   
   // Fallback to openchain signature database
@@ -81,7 +86,7 @@ export async function resolveFunctionSignature(address: string, selector: string
       return name;
     }
   } catch (error) {
-    console.error('Failed to fetch from OpenChain:', error);
+    // Suppress console error
   }
   
   return null;

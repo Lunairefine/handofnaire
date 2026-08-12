@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ContractMetadata, MintTransaction } from '@/types';
 import { shortenAddress, shortenHash, getKnownContract } from '@/utils/format';
 import { ExternalLink, Compass, Zap, Copy, Check, Hash, Coins, Terminal, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAppContext, NETWORK_CONFIG } from '@/app/components/AppContext';
 
 interface ContractDetailsProps {
   metadata: ContractMetadata | null;
@@ -18,6 +19,9 @@ export default function ContractDetails({
 }: ContractDetailsProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const { activeNetwork } = useAppContext();
+  const networkConfig = NETWORK_CONFIG[activeNetwork] || NETWORK_CONFIG.ethereum;
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -113,7 +117,7 @@ export default function ContractDetails({
                     <div className="flex items-center gap-2 mt-1.5">
                       <h2 className="text-sm font-extrabold text-[var(--text-primary)]">{metadata.name}</h2>
                       <a 
-                        href={`https://opensea.io/assets/ethereum/${selectedTx.contractAddress}`}
+                        href={`https://opensea.io/assets/${networkConfig.openseaChain}/${selectedTx.contractAddress}`}
                         target="_blank"
                         rel="noreferrer"
                         className="text-[var(--text-secondary)] hover:text-[#2081E2] transition-colors"
@@ -201,11 +205,11 @@ export default function ContractDetails({
                   {copiedField === 'tx' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
                 </button>
                 <a
-                  href={`https://etherscan.io/tx/${selectedTx.hash}`}
+                  href={`${networkConfig.explorerUrl}/tx/${selectedTx.hash}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
-                  title="View on Etherscan"
+                  title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
                 </a>
@@ -236,11 +240,11 @@ export default function ContractDetails({
                   {copiedField === 'to' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
                 </button>
                 <a
-                  href={`https://etherscan.io/address/${selectedTx.to}`}
+                  href={`${networkConfig.explorerUrl}/address/${selectedTx.to}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
-                  title="View on Etherscan"
+                  title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
                 </a>
@@ -260,11 +264,11 @@ export default function ContractDetails({
                   {copiedField === 'ca' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
                 </button>
                 <a
-                  href={`https://etherscan.io/address/${selectedTx.contractAddress}`}
+                  href={`${networkConfig.explorerUrl}/address/${selectedTx.contractAddress}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
-                  title="View on Etherscan"
+                  title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
                 </a>
@@ -284,11 +288,11 @@ export default function ContractDetails({
                   {copiedField === 'from' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
                 </button>
                 <a
-                  href={`https://etherscan.io/address/${selectedTx.from}`}
+                  href={`${networkConfig.explorerUrl}/address/${selectedTx.from}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
-                  title="View on Etherscan"
+                  title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
                 </a>
@@ -305,7 +309,7 @@ export default function ContractDetails({
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--text-secondary)]">VALUE:</span>
-                <span className="font-bold text-[var(--text-primary)]">{selectedTx.value} ETH</span>
+                <span className="font-bold text-[var(--text-primary)]">{selectedTx.value} {networkConfig.name === 'Base' ? 'ETH' : 'ETH'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--text-secondary)]">SELECTOR:</span>
