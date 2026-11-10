@@ -129,7 +129,12 @@ export function useMintScanner(mode: string = 'ERC721') {
                 const eventTopic = log.topics[0];
 
                 if (eventTopic === TRANSFER_TOPIC) {
-                  return log.topics[1] === ZERO_TOPIC;
+                  // ERC721 Transfer indexes tokenId (4 topics total), while
+                  // ERC20 Transfer stores amount in data (3 topics total).
+                  if (mode === 'ERC721') {
+                    return log.topics.length === 4 && log.topics[1] === ZERO_TOPIC;
+                  }
+                  return log.topics.length === 3 && log.topics[1] === ZERO_TOPIC;
                 }
 
                 if (mode === 'ERC721' && (eventTopic === TRANSFER_SINGLE_TOPIC || eventTopic === TRANSFER_BATCH_TOPIC)) {
