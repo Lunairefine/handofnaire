@@ -25,11 +25,11 @@ export default function MultisenderType({ selected, onSelect }: MultisenderTypeP
           className={cn(
             "p-4 text-left rounded-[1px] border transition-all duration-200",
             selected === type.id
-              ? "border-teal-500 bg-teal-500/10"
+              ? "border-zinc-500 bg-zinc-500/10"
               : "border-[var(--border-color)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface)]"
           )}
         >
-          <h3 className={cn("font-medium", selected === type.id ? "text-teal-600 dark:text-teal-400" : "text-[var(--text-primary)]")}>
+          <h3 className={cn("font-medium", selected === type.id ? "text-zinc-600 dark:text-zinc-400" : "text-[var(--text-primary)]")}>
             {type.title}
           </h3>
           <p className="text-sm text-[var(--text-secondary)] mt-1">{type.desc}</p>

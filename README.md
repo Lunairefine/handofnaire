@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hand of Naire
 
-## Getting Started
+Hand of Naire adalah dashboard toolkit Web3 berbasis Next.js untuk memantau aktivitas blockchain, memeriksa aset, dan menjalankan operasi multi-wallet.
 
-First, run the development server:
+## Tools
+
+- **Portfolio** — melihat portfolio, saldo, token, dan riwayat aktivitas berdasarkan alamat.
+- **Wallet Generator** — membuat wallet EVM dan vanity address.
+- **Balance Checker** — memeriksa saldo banyak alamat.
+- **Multisender** — mengirim native token ke banyak alamat dengan mode one-to-many, many-to-one, dan many-to-many.
+- **RPC Scanner** — menguji endpoint RPC dan membandingkan latency/status jaringan.
+- **ERC721 Mint Scanner** — memantau event mint NFT dari log `Transfer`, ERC1155, dan `ConsecutiveTransfer`.
+- **ERC20 Mint Scanner** — memantau event `Transfer` dari zero address.
+
+OpenSea tidak ditampilkan pada menu navigasi utama.
+
+## Jaringan
+
+Selector jaringan utama mendukung:
+
+- Ethereum
+- Base
+- Optimism
+- Arbitrum One
+- Elysium Mainnet (`99901`)
+- HyperEVM (`999`)
+- BNB Smart Chain
+- Robinhood Chain
+
+Detail RPC, explorer, dan Blockscout dikelola di [`src/services/networkConfig.ts`](src/services/networkConfig.ts). URL RPC bukan secret dan tidak perlu disimpan di `.env`.
+
+## Prasyarat
+
+- Node.js 20 atau lebih baru
+- npm
+
+## Menjalankan secara lokal
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Environment variable hanya diperlukan untuk konfigurasi yang bersifat rahasia atau deployment-specific. Buat file `.env.local` jika diperlukan:
 
-## Learn More
+```env
+OPENSEA_API_KEY=your_opensea_api_key
+```
 
-To learn more about Next.js, take a look at the following resources:
+RPC jaringan tidak dikonfigurasi melalui environment variable. Untuk mengganti endpoint RPC, edit `NETWORK_CONFIG` pada `src/services/networkConfig.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Perintah yang tersedia
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev      # menjalankan development server
+npm run build    # membuat production build
+npm run start    # menjalankan production server
+npm run lint     # menjalankan ESLint
+```
 
-## Deploy on Vercel
+## Struktur penting
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+src/app/                 halaman dan komponen Next.js
+src/hooks/               scanner dan state logic
+src/services/            konfigurasi jaringan, RPC, dan explorer
+src/lib/                 chain clients dan utilitas transaksi
+src/parser/              parser ABI dan fungsi mint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Catatan keamanan
+
+- Gunakan burner wallet untuk multisender.
+- Jangan memasukkan private key ke repository atau membagikannya.
+- Transaksi blockchain tidak dapat dibatalkan setelah dikirim.

@@ -8,7 +8,7 @@ import {
   isValidAddress,
 } from "@/app/portfolio/lib/holdings";
 import { type BlockscoutTransaction } from "@/app/portfolio/lib/blockscout";
-import { useAppContext } from "@/app/components/AppContext";
+import { shortenAddress } from "@/utils/format";
 
 type AddressFlowPanelProps = {
   address: string;
@@ -32,11 +32,11 @@ const getEtherscanTxUrl = (hash?: string) =>
   hash ? `https://etherscan.io/tx/${hash}` : null;
 
 export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
-  const { theme } = useAppContext();
   const [transactions, setTransactions] = useState<BlockscoutTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasFetched, setHasFetched] = useState(false);
+  const [ensNames, setEnsNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (hasFetched) return;
@@ -100,6 +100,45 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
     };
   }, [address, hasFetched]);
 
+  useEffect(() => {
+    const partyAddresses = Array.from(
+      new Set(
+        transactions
+          .flatMap((transaction) => [transaction.from?.hash, transaction.to?.hash])
+          .filter((hash): hash is string => Boolean(hash) && isValidAddress(hash))
+          .map((hash) => hash.toLowerCase())
+      )
+    );
+
+    if (partyAddresses.length === 0) return;
+
+    let isMounted = true;
+    Promise.all(
+      partyAddresses.map(async (partyAddress) => {
+        try {
+          const response = await fetch(`/api/ens?address=${encodeURIComponent(partyAddress)}`, {
+            cache: "no-store",
+          });
+          if (!response.ok) return [partyAddress, ""] as const;
+          const data = (await response.json()) as { ensName?: string | null };
+          return [partyAddress, data.ensName || ""] as const;
+        } catch {
+          return [partyAddress, ""] as const;
+        }
+      })
+    ).then((resolvedNames) => {
+      if (!isMounted) return;
+      setEnsNames((current) => ({
+        ...current,
+        ...Object.fromEntries(resolvedNames),
+      }));
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [transactions]);
+
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -127,7 +166,7 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
   }
 
   return (
-    <div className="divide-y divide-[var(--border-color)]" style={{ fontFamily: "var(--font-helvetica), sans-serif" }}>
+    <div className="divide-y divide-[var(--border-color)]" style={{ fontFamily: "var(--font-monument), sans-serif" }}>
       {transactions.slice(0, 20).map((transaction) => {
         const fromHash = transaction.from?.hash?.toLowerCase();
         const normalizedAddress = address.toLowerCase();
@@ -135,6 +174,12 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
         
         const source = transaction.from;
         const target = transaction.to;
+
+        const getPartyName = (party: BlockscoutTransaction["from"]) => {
+          const hash = party?.hash?.toLowerCase();
+          return party?.ens_domain_name || (hash ? ensNames[hash] : "") || party?.name ||
+            (party?.hash ? shortenAddress(party.hash, 4) : "Unknown address");
+        };
         
         const txUrl = getEtherscanTxUrl(transaction.hash);
         const txKey = transaction.hash || `${transaction.timestamp}-${transaction.block_number}`;
@@ -143,9 +188,9 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
         const getAvatar = (party: any) => {
           const partyHash = party?.hash?.toLowerCase();
           
-          const name = party?.ens_domain_name || party?.name || party?.hash || "?";
+          const name = party?.ens_domain_name || (partyHash ? ensNames[partyHash] : null) || party?.name || party?.hash || "?";
           const char = name.replace(/^0x/i, "").charAt(0).toUpperCase();
-          const ensName = party?.ens_domain_name;
+          const ensName = party?.ens_domain_name || (partyHash ? ensNames[partyHash] : null);
           
           let avatarUrl = ensName 
             ? `https://metadata.ens.domains/mainnet/avatar/${encodeURIComponent(ensName)}`
@@ -154,7 +199,7 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
           if (!avatarUrl && partyHash) {
             const charSum = partyHash.split('').reduce((sum: number, c: string) => sum + c.charCodeAt(0), 0);
             const imageIndex = (charSum % 4) + 1; 
-            const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
+            const bgPrefix = 'syntaxbgwhite';
             avatarUrl = `/media/syntax/${bgPrefix}${imageIndex}.png`;
           }
 
@@ -170,7 +215,7 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
                       e.currentTarget.dataset.syntaxFallbackApplied = "true";
                       const charSum = partyHash.split('').reduce((sum: number, c: string) => sum + c.charCodeAt(0), 0);
                       const imageIndex = (charSum % 4) + 1;
-                      const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
+                      const bgPrefix = 'syntaxbgwhite';
                       e.currentTarget.src = `/media/syntax/${bgPrefix}${imageIndex}.png`;
                     } else {
                       e.currentTarget.style.display = 'none';
@@ -189,7 +234,7 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
               {}
               {getAvatar(source)}
               <span className="text-[13px] font-medium text-foreground truncate max-w-[80px] sm:max-w-[120px]">
-                {source?.ens_domain_name || source?.name || "Unknown"}
+                {getPartyName(source)}
               </span>
 
               {}
@@ -214,7 +259,7 @@ export default function AddressFlowPanel({ address }: AddressFlowPanelProps) {
               {}
               {getAvatar(target)}
               <span className="text-[13px] font-medium text-foreground truncate max-w-[80px] sm:max-w-[120px]">
-                {target?.ens_domain_name || target?.name || "Unknown"}
+                {getPartyName(target)}
               </span>
             </div>
 

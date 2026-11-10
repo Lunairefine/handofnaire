@@ -23,5 +23,15 @@
     "name": "rwsETH",
     "address": "0x58749C46Ffe97e4d79508a2C781C440f4756f064",
     "color": "text-emerald-500"
+  },
+  {
+    "name": "uniswapv4",
+    "address": "0xbD216513d74C8cf14cf4747E6AaA6420FF64ee9e",
+    "color": "text-white"
+  },
+  {
+    "name": "slipstream",
+    "address": "0x1ef615C7d6B02FD05ACff1572951F5cd0e342D93",
+    "color": "text-white"
   }
 ]

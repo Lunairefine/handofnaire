@@ -10,7 +10,9 @@ import ScannerStats from '@/app/erc721/components/ScannerStats';
 import LiveFeed from '@/app/erc721/components/LiveFeed';
 import ContractDetails from '@/app/erc721/components/ContractDetails';
 import CodeViewer from '@/app/erc721/components/CodeViewer';
-import { useAppContext, NETWORK_CONFIG } from '@/app/components/AppContext';
+import { useAppContext } from '@/app/components/AppContext';
+import { NETWORK_CONFIG } from '@/services/networkConfig';
+import NetworkSelector from '@/app/components/NetworkSelector';
 
 export default function ERC721ScannerPage() {
   const {
@@ -21,6 +23,9 @@ export default function ERC721ScannerPage() {
     status,
     tps,
     clearFeed,
+    blockContractTemporarily,
+    unblockContract,
+    temporaryBlockedContracts,
     isScanning,
     toggleScanning
   } = useMintScanner('ERC721');
@@ -33,7 +38,7 @@ export default function ERC721ScannerPage() {
   const [isLoadingMetadata, setIsLoadingMetadata] = useState<boolean>(false);
   const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
 
-  const { activeNetwork } = useAppContext();
+  const { activeNetwork, customRpcUrl } = useAppContext();
   const networkConfig = NETWORK_CONFIG[activeNetwork] || NETWORK_CONFIG.ethereum;
 
   const handleSelectContract = async (tx: MintTransaction) => {
@@ -48,7 +53,7 @@ export default function ERC721ScannerPage() {
     setIsLoadingCode(true);
 
     try {
-      const meta = await getContractMetadata(address, priceGuess, networkConfig.rpcUrl);
+      const meta = await getContractMetadata(address, priceGuess, customRpcUrl || networkConfig.rpcUrl);
       setMetadata(meta);
       setIsLoadingMetadata(false);
 
@@ -81,6 +86,9 @@ export default function ERC721ScannerPage() {
 
   return (
     <>
+      <div className="mb-5 flex justify-end">
+        <NetworkSelector />
+      </div>
       <ScannerStats
         latestBlock={latestBlock}
         blocksScanned={blocksScanned}
@@ -98,6 +106,9 @@ export default function ERC721ScannerPage() {
             selectedAddress={selectedAddress}
             onSelectContract={handleSelectContract}
             onClearFeed={clearFeed}
+            onBlockContract={blockContractTemporarily}
+            blockedContracts={temporaryBlockedContracts}
+            onUnblockContract={unblockContract}
             mode="ERC721"
           />
         </div>

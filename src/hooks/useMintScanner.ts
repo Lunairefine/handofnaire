@@ -2,8 +2,20 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { MintTransaction } from '@/types';
 import { detectMintFunction, analyzeMintType } from '@/parser/abi';
-import { useAppContext, NETWORK_CONFIG } from '@/app/components/AppContext';
+import { useAppContext } from '@/app/components/AppContext';
+import { NETWORK_CONFIG } from '@/services/networkConfig';
 import { resolveFunctionSignature } from '@/services/blockExplorer';
+
+const PERMANENTLY_BLOCKED_CONTRACTS = new Set([
+  '0xbd216513d74c8cf14cf4747e6aaa6420ff64ee9e', // uniswapv4
+  '0x1ef615c7d6b02fd05acff1572951f5cd0e342d93', // slipstream
+]);
+
+const ZERO_TOPIC = `0x${'0'.repeat(64)}`;
+const TRANSFER_TOPIC = ethers.id('Transfer(address,address,uint256)');
+const TRANSFER_SINGLE_TOPIC = ethers.id('TransferSingle(address,address,address,uint256,uint256)');
+const TRANSFER_BATCH_TOPIC = ethers.id('TransferBatch(address,address,address,uint256[],uint256[])');
+const CONSECUTIVE_TRANSFER_TOPIC = ethers.id('ConsecutiveTransfer(uint256,uint256,address,address)');
 
 export function useMintScanner(mode: string = 'ERC721') {
   const { isScanning, setIsScanning, customRpcUrl, activeNetwork } = useAppContext();
@@ -13,14 +25,32 @@ export function useMintScanner(mode: string = 'ERC721') {
   const [latestBlock, setLatestBlock] = useState<number>(0);
   const [status, setStatus] = useState<string>('Initializing...');
   const [tps, setTps] = useState<number>(0);
+  const [temporaryBlockedContracts, setTemporaryBlockedContracts] = useState<string[]>([]);
 
   const scannedTxHashes = useRef<Set<string>>(new Set());
   const lastBlockRef = useRef<number>(0);
   const isScanningRef = useRef<boolean>(isScanning);
+  const temporaryBlockedContractsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     isScanningRef.current = isScanning;
   }, [isScanning]);
+
+  const blockContractTemporarily = useCallback((address: string) => {
+    const normalizedAddress = address.toLowerCase();
+    temporaryBlockedContractsRef.current.add(normalizedAddress);
+    setTemporaryBlockedContracts(Array.from(temporaryBlockedContractsRef.current));
+    setTransactions(prev => {
+      const filtered = prev.filter(tx => tx.contractAddress.toLowerCase() !== normalizedAddress);
+      setActiveMintsCount(new Set(filtered.map(tx => tx.contractAddress)).size);
+      return filtered;
+    });
+  }, []);
+
+  const unblockContract = useCallback((address: string) => {
+    temporaryBlockedContractsRef.current.delete(address.toLowerCase());
+    setTemporaryBlockedContracts(Array.from(temporaryBlockedContractsRef.current));
+  }, []);
 
   // Reset scanning status when moving between routes
   useEffect(() => {
@@ -31,15 +61,24 @@ export function useMintScanner(mode: string = 'ERC721') {
   }, [setIsScanning]);
 
   useEffect(() => {
+    lastBlockRef.current = 0;
+    scannedTxHashes.current.clear();
+    setTransactions([]);
+    setBlocksScanned(0);
+    setActiveMintsCount(0);
+    setLatestBlock(0);
+    setStatus('Initializing...');
+  }, [activeNetwork, mode]);
+
+  useEffect(() => {
     let pollingTimeout: NodeJS.Timeout;
     let isActive = true;
 
     if (isScanning) {
       setTimeout(() => { if (isActive) setStatus('Connecting...') }, 0);
 
-      const networkRpc = NETWORK_CONFIG[activeNetwork]?.rpcUrl || 'https://ethereum-rpc.publicnode.com';
-      const defaultRpc = process.env.NEXT_PUBLIC_RPC_URL || networkRpc;
-      const rpcUrl = customRpcUrl || defaultRpc;
+      const networkRpc = NETWORK_CONFIG[activeNetwork]?.rpcUrl || NETWORK_CONFIG.ethereum.rpcUrl;
+      const rpcUrl = customRpcUrl || networkRpc;
       const provider = new ethers.JsonRpcProvider(rpcUrl, undefined, { staticNetwork: true });
 
       const pollBlock = async () => {
@@ -50,26 +89,18 @@ export function useMintScanner(mode: string = 'ERC721') {
           
           if (blockNumber > lastBlockRef.current) {
             const prevBlock = lastBlockRef.current;
-            lastBlockRef.current = blockNumber;
+            let scanCompleted = true;
             
-            const startScan = prevBlock === 0 ? blockNumber - 1 : prevBlock + 1;
+            const startScan = prevBlock === 0 ? Math.max(0, blockNumber - 20) : prevBlock + 1;
             const endScan = blockNumber;
 
             for (let b = startScan; b <= endScan; b++) {
               if (!isActive) break;
               setStatus('Scanning...');
               
-              const topics = mode === 'ERC721' ? [
-                [
-                  '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', 
-                  '0xc3d58168c5ae7397731d063d5bbf3d65785442f3937666f3aec8580e0593f7b0', 
-                  '0x4a0b2308138e10cdd41602622944a335be9924aff02798d94e2163c4cdb18d8d'  
-                ]
-              ] : [
-                [
-                  '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' 
-                ]
-              ];
+              const topics = mode === 'ERC721'
+                ? [[TRANSFER_TOPIC, TRANSFER_SINGLE_TOPIC, TRANSFER_BATCH_TOPIC, CONSECUTIVE_TRANSFER_TOPIC]]
+                : [[TRANSFER_TOPIC]];
 
               let logs: ethers.Log[];
               try {
@@ -81,7 +112,7 @@ export function useMintScanner(mode: string = 'ERC721') {
               } catch (err: any) {
                 if (err.message && err.message.toLowerCase().includes('extends beyond current head block')) {
                   console.warn(`RPC lag detected at block #${b}. Will retry next tick.`);
-                  lastBlockRef.current = b - 1;
+                  scanCompleted = false;
                   break;
                 }
                 throw err;
@@ -95,20 +126,17 @@ export function useMintScanner(mode: string = 'ERC721') {
               }
 
               const mintLogs = logs.filter(log => {
-                const isTransfer = log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
-                if (isTransfer) {
-                  if (mode === 'ERC721') {
-                    return log.topics.length === 4 && log.topics[1] === '0x0000000000000000000000000000000000000000000000000000000000000000';
-                  } else {
-                    return log.topics.length === 3 && log.topics[1] === '0x0000000000000000000000000000000000000000000000000000000000000000';
-                  }
-                }
-                
-                if (mode === 'ERC721') {
-                  return log.topics[2] === '0x0000000000000000000000000000000000000000000000000000000000000000';
+                const eventTopic = log.topics[0];
+
+                if (eventTopic === TRANSFER_TOPIC) {
+                  return log.topics[1] === ZERO_TOPIC;
                 }
 
-                return false;
+                if (mode === 'ERC721' && (eventTopic === TRANSFER_SINGLE_TOPIC || eventTopic === TRANSFER_BATCH_TOPIC)) {
+                  return log.topics[2] === ZERO_TOPIC;
+                }
+
+                return mode === 'ERC721' && eventTopic === CONSECUTIVE_TRANSFER_TOPIC && log.topics[3] === ZERO_TOPIC;
               });
 
               if (mintLogs.length === 0) {
@@ -139,13 +167,20 @@ export function useMintScanner(mode: string = 'ERC721') {
                   try {
                     if (!isActive) return;
                     if (scannedTxHashes.current.has(hash)) return;
-                    scannedTxHashes.current.add(hash);
 
                     const tx = await provider.getTransaction(hash);
                     if (!isActive || !tx) return;
 
                     const logsForTx = txHashToLogs.get(hash)!;
                     const quantity = logsForTx.length;
+                    const contractAddress = ethers.getAddress(logsForTx[0].address);
+                    const normalizedContractAddress = contractAddress.toLowerCase();
+                    if (
+                      PERMANENTLY_BLOCKED_CONTRACTS.has(normalizedContractAddress) ||
+                      temporaryBlockedContractsRef.current.has(normalizedContractAddress)
+                    ) return;
+                    scannedTxHashes.current.add(hash);
+
                     const ethValue = ethers.formatEther(tx.value);
                     const priceVal = parseFloat(ethValue) / quantity;
                     
@@ -163,8 +198,6 @@ export function useMintScanner(mode: string = 'ERC721') {
                     }
                     
                     const mintType = analyzeMintType(functionName, tx.value, tx.from);
-                    const contractAddress = ethers.getAddress(logsForTx[0].address);
-
                     newTxs.push({
                       id: `${hash}-${b}`,
                       hash: hash,
@@ -198,7 +231,10 @@ export function useMintScanner(mode: string = 'ERC721') {
               setBlocksScanned(prev => prev + 1);
               setTps(parseFloat((uniqueHashes.length / 12).toFixed(2)));
             }
-            setStatus('Monitoring');
+            if (scanCompleted) {
+              lastBlockRef.current = blockNumber;
+              setStatus('Monitoring');
+            }
           }
         } catch (error: unknown) {
           console.error('RPC Error details:', error);
@@ -232,6 +268,9 @@ export function useMintScanner(mode: string = 'ERC721') {
     latestBlock,
     status,
     tps,
+    temporaryBlockedContracts,
+    blockContractTemporarily,
+    unblockContract,
     toggleScanning: useAppContext().toggleScanning,
     clearFeed
   };

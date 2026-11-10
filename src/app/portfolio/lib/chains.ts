@@ -6,7 +6,7 @@ export type ChainOption = {
 };
 
 export const makeLogo = (label: string, color: string) => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="32" fill="${color}"/><text x="50%" y="52%" font-size="26" text-anchor="middle" font-family="Arial, sans-serif" fill="#0a0a0a" font-weight="700">${label}</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="32" fill="${color}"/><text x="50%" y="52%" font-size="26" text-anchor="middle" font-family="ABC Monument Grotesk, sans-serif" fill="#0a0a0a" font-weight="700">${label}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
@@ -56,43 +56,43 @@ export const SCAN_CHAINS: ChainOption[] = [
   {
     id: 81457,
     name: "Blast",
-    logo: makeLogo("B", "#fbcfe8"),
+    logo: makeLogo("B", "#B8B8B8"),
     fallbackLabel: "B",
   },
   {
     id: 34443,
     name: "Mode",
-    logo: makeLogo("M", "#bbf7d0"),
+    logo: makeLogo("M", "#B8B8B8"),
     fallbackLabel: "M",
   },
   {
     id: 5000,
     name: "Mantle",
-    logo: makeLogo("M", "#ddd6fe"),
+    logo: makeLogo("M", "#B8B8B8"),
     fallbackLabel: "M",
   },
   {
     id: 324,
     name: "zkSync Era",
-    logo: makeLogo("Z", "#bae6fd"),
+    logo: makeLogo("Z", "#B8B8B8"),
     fallbackLabel: "Z",
   },
   {
     id: 130,
     name: "Unichain",
-    logo: makeLogo("U", "#fed7aa"),
+    logo: makeLogo("U", "#B8B8B8"),
     fallbackLabel: "U",
   },
   {
     id: 57073,
     name: "Ink",
-    logo: makeLogo("I", "#fecdd3"),
+    logo: makeLogo("I", "#B8B8B8"),
     fallbackLabel: "I",
   },
   {
     id: 252,
     name: "Fraxtal",
-    logo: makeLogo("F", "#fde68a"),
+    logo: makeLogo("F", "#B8B8B8"),
     fallbackLabel: "F",
   },
   {
@@ -110,13 +110,25 @@ export const SCAN_CHAINS: ChainOption[] = [
   {
     id: 100,
     name: "Gnosis",
-    logo: makeLogo("G", "#a7f3d0"),
+    logo: makeLogo("G", "#B8B8B8"),
     fallbackLabel: "G",
   },
   {
     id: 42220,
     name: "Celo",
-    logo: makeLogo("C", "#bbf7d0"),
+    logo: makeLogo("C", "#B8B8B8"),
     fallbackLabel: "C",
+  },
+  {
+    id: 99901,
+    name: "Elysium",
+    logo: makeLogo("E", "#B8B8B8"),
+    fallbackLabel: "E",
+  },
+  {
+    id: 999,
+    name: "HyperEVM",
+    logo: makeLogo("H", "#B8B8B8"),
+    fallbackLabel: "H",
   },
 ];

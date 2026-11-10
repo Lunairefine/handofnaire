@@ -167,7 +167,7 @@ export default function Multisender() {
                 value={network}
                 onChange={(e) => setNetwork(e.target.value)}
                 disabled={isProcessing}
-                className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-teal-500 appearance-none cursor-pointer disabled:cursor-not-allowed"
+                className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-zinc-500 appearance-none cursor-pointer disabled:cursor-not-allowed"
               >
                 {Object.entries(CHAINS).map(([key, chain]) => (
                   <option key={key} value={key}>

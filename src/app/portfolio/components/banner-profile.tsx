@@ -246,9 +246,7 @@ export default function BannerProfile({ address }: { address: string }) {
             className="w-full h-full object-cover"
           />
         </div>
-      ) : (
-        <div className="absolute inset-0 z-0 bg-foreground/[0.03]" />
-      )}
+      ) : null}
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">

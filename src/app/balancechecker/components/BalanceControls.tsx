@@ -13,7 +13,7 @@ export default function BalanceControls({ onCheck, onClear, isLoading, hasData }
       <button
         onClick={onCheck}
         disabled={isLoading}
-        className="w-full sm:w-auto bg-teal-500 hover:bg-teal-600 disabled:bg-teal-500/50 text-white font-medium px-8 py-2.5 rounded-[1px] transition-colors flex items-center justify-center cursor-pointer min-h-[42px]"
+        className="w-full sm:w-auto bg-zinc-500 hover:bg-zinc-600 disabled:bg-zinc-500/50 text-white font-medium px-8 py-2.5 rounded-[1px] transition-colors flex items-center justify-center cursor-pointer min-h-[42px]"
       >
         {isLoading ? (
           <div className="flex items-center gap-2">

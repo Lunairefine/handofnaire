@@ -1,6 +1,5 @@
 "use client";
 
-import { Copy, PlusCircle, Activity } from 'lucide-react';
 import { ChainData } from '@/app/nairerpc/types';
 import { useRPCScanner } from '@/app/nairerpc/hooks/useRPCScanner';
 import { addNetworkToWallet } from '@/app/nairerpc/lib/walletUtils';
@@ -21,7 +20,7 @@ export default function ChainCard({ chain }: { chain: ChainData }) {
 
   const getStatusText = (latency: number, status: string) => {
     if (status === 'offline' || latency === Infinity) return 'Offline';
-    if (status === 'checking') return 'Mengecek...';
+    if (status === 'checking') return 'Checking...';
     return `${latency}ms`;
   };
 
@@ -47,12 +46,10 @@ export default function ChainCard({ chain }: { chain: ChainData }) {
             title="Klik untuk menyalin"
           >
             <div className="flex justify-between items-center">
-              <span className="text-sm truncate w-2/3 flex items-center gap-2 text-[var(--text-primary)] group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+              <span className="text-sm truncate w-2/3 flex items-center gap-2 text-[var(--text-primary)] group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
                 {rpc.url}
-                <Copy className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--text-secondary)] dark:text-[var(--text-secondary)]" />
               </span>
               <span className={`text-xs font-mono flex items-center gap-1 ${getLatencyColor(rpc.latency, rpc.status)}`}>
-                {rpc.status === 'online' && <Activity className="w-3 h-3" />}
                 {getStatusText(rpc.latency, rpc.status)}
               </span>
             </div>
@@ -62,9 +59,9 @@ export default function ChainCard({ chain }: { chain: ChainData }) {
 
       <button
         onClick={() => addNetworkToWallet(chain, fastestRpc)}
-        className="w-full mt-2 flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-[1px] text-sm transition-colors font-medium cursor-pointer"
+        className="w-full mt-2 flex items-center justify-center gap-2 bg-zinc-500 hover:bg-zinc-600 text-white py-2 rounded-[1px] text-sm transition-colors font-medium cursor-pointer"
       >
-        <PlusCircle className="w-4 h-4" /> Add Network
+        Add Network
       </button>
     </div>
   );

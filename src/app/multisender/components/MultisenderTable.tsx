@@ -33,7 +33,7 @@ export default function MultisenderTable({ transactions }: MultisenderTableProps
                   </code>
                 </td>
                 <td className="px-6 py-4">
-                  <code className="bg-[var(--bg-surface)] px-2 py-1 rounded-[1px] text-teal-600 dark:text-teal-400">
+                  <code className="bg-[var(--bg-surface)] px-2 py-1 rounded-[1px] text-zinc-600 dark:text-zinc-400">
                     {truncateAddress(tx.to)}
                   </code>
                 </td>
@@ -50,7 +50,7 @@ export default function MultisenderTable({ transactions }: MultisenderTableProps
                         Success
                       </span>
                       {tx.txHash && (
-                        <a href={`#`} className="text-xs text-teal-500 hover:underline" title={tx.txHash}>
+                        <a href={`#`} className="text-xs text-zinc-500 hover:underline" title={tx.txHash}>
                           {truncateAddress(tx.txHash)}
                         </a>
                       )}

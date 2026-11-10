@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { ContractMetadata } from '@/types';
+import { NETWORK_CONFIG } from './networkConfig';
 
 
 const ERC721_ABI = [
@@ -22,7 +23,7 @@ export async function getContractMetadata(
   mintPrice: string = '0.05',
   rpcUrl?: string
 ): Promise<ContractMetadata> {
-  const finalRpcUrl = rpcUrl || process.env.NEXT_PUBLIC_RPC_URL || 'https://ethereum-rpc.publicnode.com';
+  const finalRpcUrl = rpcUrl || NETWORK_CONFIG.ethereum.rpcUrl;
 
   const fallback: ContractMetadata = {
     address,

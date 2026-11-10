@@ -1,5 +1,4 @@
 import React from 'react';
-import { Code, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface CodeViewerProps {
   solidityCode: string;
@@ -28,7 +27,7 @@ function highlightSolidity(code: string): string {
   escaped = escaped.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="text-gray-500 italic">$1</span>');
 
   escaped = escaped.replace(keywords, '<span class="text-indigo-400 font-bold">$1</span>');
-  escaped = escaped.replace(modifiers, '<span class="text-teal-400 font-semibold">$1</span>');
+  escaped = escaped.replace(modifiers, '<span class="text-zinc-400 font-semibold">$1</span>');
   escaped = escaped.replace(control, '<span class="text-rose-400">$1</span>');
   escaped = escaped.replace(types, '<span class="text-amber-300 font-medium">$1</span>');
   escaped = escaped.replace(globals, '<span class="text-sky-400 font-semibold">$1</span>');
@@ -61,10 +60,6 @@ export default function CodeViewer({
         className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-white/[0.03] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <div className="text-[var(--text-secondary)]">
-            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </div>
-          <Code size={16} className="text-teal-500" />
           <h2 className="font-bold text-xs uppercase tracking-wider text-[var(--text-primary)] font-sans">
             Function Code
           </h2>
@@ -77,17 +72,7 @@ export default function CodeViewer({
           disabled={isLoading || !solidityCode}
           className="text-[10px] font-sans text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5 p-1 px-2.5 rounded-[1px] border border-[var(--border-color)] bg-[var(--bg-main)] cursor-pointer disabled:opacity-50"
         >
-          {copied ? (
-            <>
-              <Check size={11} className="text-emerald-500" />
-              Copied!
-            </>
-          ) : (
-            <>
-              <Copy size={11} />
-              Copy Snippet
-            </>
-          )}
+          {copied ? 'Copied!' : 'Copy Snippet'}
         </button>
       </div>
 
@@ -96,8 +81,8 @@ export default function CodeViewer({
         {isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 gap-3">
             <span className="relative flex h-5 w-5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-5 w-5 bg-teal-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-5 w-5 bg-zinc-500"></span>
             </span>
             <p className="text-xs text-gray-400 font-sans">Pulling & parsing Solidity contract code...</p>
           </div>

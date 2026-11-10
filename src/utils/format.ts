@@ -16,6 +16,14 @@ export function shortenHash(hash: string, chars = 6): string {
   return `${hash.substring(0, chars + 2)}...${hash.substring(hash.length - chars)}`;
 }
 
+/** Returns the same deterministic default PFP used by the Portfolio page. */
+export function getDefaultProfileImage(address: string): string {
+  const cleanAddress = (address || '').toLowerCase();
+  const charSum = cleanAddress.split('').reduce((sum, character) => sum + character.charCodeAt(0), 0);
+  const imageIndex = (charSum % 4) + 1;
+  return `/media/syntax/syntaxbgwhite${imageIndex}.png`;
+}
+
 /**
  * Formats a timestamp into a readable duration or clock time (e.g., "10s ago" or "13:45:02")
  */

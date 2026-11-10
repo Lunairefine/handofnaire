@@ -1,0 +1,68 @@
+export const NETWORK_CONFIG = {
+  ethereum: {
+    id: 'ethereum',
+    name: 'Ethereum',
+    rpcUrl: 'https://ethereum-rpc.publicnode.com',
+    explorerUrl: 'https://etherscan.io',
+    openseaChain: 'ethereum',
+    blockscoutApiUrl: 'https://eth.blockscout.com',
+  },
+  base: {
+    id: 'base',
+    name: 'Base',
+    rpcUrl: 'https://base-rpc.publicnode.com',
+    explorerUrl: 'https://basescan.org',
+    openseaChain: 'base',
+    blockscoutApiUrl: 'https://base.blockscout.com',
+  },
+  optimism: {
+    id: 'optimism',
+    name: 'Optimism',
+    rpcUrl: 'https://optimism-rpc.publicnode.com',
+    explorerUrl: 'https://optimistic.etherscan.io',
+    openseaChain: 'optimism',
+    blockscoutApiUrl: 'https://optimism.blockscout.com',
+  },
+  arbitrum: {
+    id: 'arbitrum',
+    name: 'Arbitrum One',
+    rpcUrl: 'https://arbitrum-one-rpc.publicnode.com',
+    explorerUrl: 'https://arbiscan.io',
+    openseaChain: 'arbitrum',
+    blockscoutApiUrl: 'https://arbitrum.blockscout.com',
+  },
+  elysium: {
+    id: 'elysium',
+    name: 'Elysium',
+    rpcUrl: 'https://node.eleos.fun',
+    explorerUrl: 'https://elysium.kinetiq.xyz/explorer',
+    openseaChain: 'elysium',
+    blockscoutApiUrl: 'https://elysium.kinetiq.xyz',
+  },
+  hyperevm: {
+    id: 'hyperevm',
+    name: 'HyperEVM',
+    rpcUrl: 'https://rpc.hyperliquid.xyz/evm',
+    explorerUrl: 'https://hyperevmscan.io',
+    openseaChain: 'hyperevm',
+    blockscoutApiUrl: 'https://hyperevmscan.io',
+  },
+  bsc: {
+    id: 'bsc',
+    name: 'BNB Smart Chain',
+    rpcUrl: 'https://bsc-rpc.publicnode.com',
+    explorerUrl: 'https://bscscan.com',
+    openseaChain: 'bsc',
+    blockscoutApiUrl: 'https://bnb.blockscout.com',
+  },
+  robinhood: {
+    id: 'robinhood',
+    name: 'Robinhood',
+    rpcUrl: 'https://robinhood.api.pocket.network',
+    explorerUrl: 'https://robinhoodchain.blockscout.com',
+    openseaChain: 'robinhood',
+    blockscoutApiUrl: 'https://robinhoodchain.blockscout.com',
+  },
+} as const;
+
+export type Network = keyof typeof NETWORK_CONFIG;

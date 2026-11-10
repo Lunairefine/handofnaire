@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
+import { ExternalLink } from 'lucide-react';
 import { OpenseaDrop } from '@/types';
-import { shortenAddress } from '@/utils/format';
-import { Trash2, ChevronDown, ChevronUp, ExternalLink, Loader2 } from 'lucide-react';
 
 interface LiveDropsProps {
   drops: OpenseaDrop[];
@@ -46,12 +45,7 @@ export default function LiveDrops({
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex items-center gap-3">
-          {isOpen ? <ChevronUp size={16} className="text-[var(--text-secondary)]" /> : <ChevronDown size={16} className="text-[var(--text-secondary)]" />}
           <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
-            </span>
             <h2 className="font-bold text-xs uppercase tracking-wider text-[var(--text-primary)] font-sans">Opensea Recent Drops</h2>
           </div>
         </div>
@@ -62,7 +56,6 @@ export default function LiveDrops({
           }}
           className="text-xs text-[var(--text-secondary)] hover:text-rose-500 transition-colors flex items-center gap-1.5 p-1 px-2 rounded-[1px] hover:bg-rose-500/5 cursor-pointer font-sans border border-transparent hover:border-[var(--border-color)]"
         >
-          <Trash2 size={13} />
           Clear
         </button>
       </div>
@@ -76,7 +69,7 @@ export default function LiveDrops({
                 onClick={() => setFilter(tab)}
                 className={`text-[10px] font-bold px-3 py-1.5 rounded-[1px] capitalize transition-all cursor-pointer whitespace-nowrap font-sans border ${
                   filter === tab
-                    ? 'bg-teal-500/10 border-teal-500/20 text-teal-500'
+                    ? 'bg-zinc-500/10 border-zinc-500/20 text-zinc-500'
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -88,7 +81,6 @@ export default function LiveDrops({
           <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3">
             {isLoading ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                <Loader2 size={20} className="text-teal-500 animate-spin mb-2" />
                 <p className="text-xs text-[var(--text-secondary)] font-sans">Fetching drops from OpenSea...</p>
               </div>
             ) : filteredDrops.length === 0 ? (
@@ -109,7 +101,7 @@ export default function LiveDrops({
                     onClick={() => onSelectDrop(drop)}
                     className={`p-3 border rounded-[1px] transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                       isSelected
-                        ? 'border-teal-500 bg-teal-500/5 glow-accent'
+                        ? 'border-zinc-500 bg-zinc-500/5 glow-accent'
                         : 'border-[var(--border-color)] bg-[var(--bg-main)] hover:bg-white/[0.03]'
                     }`}
                   >
@@ -154,10 +146,10 @@ export default function LiveDrops({
                         target="_blank"
                         rel="noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
+                        className="text-zinc-500 hover:text-zinc-400 shrink-0 flex items-center gap-0.5"
                         title="View on OpenSea"
                       >
-                        <ExternalLink size={13} />
+                        <ExternalLink size={14} aria-hidden="true" />
                       </a>
                     </div>
                   </div>

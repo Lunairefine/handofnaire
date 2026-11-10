@@ -39,11 +39,11 @@ export default function PortfolioSearchPage() {
                 if (e.key === 'Enter') handleSearch();
               }}
               placeholder="0x..."
-              className="flex-1 bg-transparent border border-[var(--border-color)] rounded-[1px] px-6 py-4 text-base focus:outline-none focus:border-teal-400 dark:focus:border-teal-400 font-mono transition-colors placeholder-[var(--text-secondary)]"
+              className="flex-1 bg-transparent border border-[var(--border-color)] rounded-[1px] px-6 py-4 text-base focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-400 font-mono transition-colors placeholder-[var(--text-secondary)]"
             />
             <button
               onClick={handleSearch}
-              className="bg-teal-500 hover:bg-teal-600 text-black px-8 py-4 rounded-[1px] font-bold transition-colors flex items-center justify-center text-base"
+              className="bg-zinc-500 hover:bg-zinc-600 text-black px-8 py-4 rounded-[1px] font-bold transition-colors flex items-center justify-center text-base"
             >
               Explore
             </button>

@@ -36,7 +36,7 @@ export default function WalletControls({
             onClick={() => setIsVanityMode(!isVanityMode)}
             className={cn(
               "relative inline-flex h-6 w-11 items-center rounded-[1px] transition-colors",
-              isVanityMode ? "bg-teal-500" : "bg-[var(--border-color)]"
+              isVanityMode ? "bg-zinc-500" : "bg-[var(--border-color)]"
             )}
           >
             <span
@@ -59,13 +59,13 @@ export default function WalletControls({
               onChange={(e) => setCount(e.target.value === '' ? '' : Number(e.target.value))}
               min="1"
               max="1000"
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-500 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
           <div className="flex gap-3 w-full sm:w-auto">
             <button
               onClick={() => onGenerate(Number(count) || 1)}
-              className="flex-1 sm:flex-initial bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px] whitespace-nowrap"
+              className="flex-1 sm:flex-initial bg-zinc-500 hover:bg-zinc-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px] whitespace-nowrap"
             >
               Generate
             </button>
@@ -87,7 +87,7 @@ export default function WalletControls({
                 value={prefix}
                 onChange={(e) => setPrefix(e.target.value)}
                 placeholder="0x..."
-                className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-500"
               />
             </div>
             <div className="space-y-2">
@@ -97,7 +97,7 @@ export default function WalletControls({
                 value={suffix}
                 onChange={(e) => setSuffix(e.target.value)}
                 placeholder="...xyz"
-                className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[1px] px-4 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-500"
               />
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function WalletControls({
               id="caseSensitive"
               checked={isCaseSensitive}
               onChange={(e) => setIsCaseSensitive(e.target.checked)}
-              className="rounded-[1px] border-[var(--border-color)] text-teal-500 focus:ring-teal-500"
+              className="rounded-[1px] border-[var(--border-color)] text-zinc-500 focus:ring-zinc-500"
             />
             <label htmlFor="caseSensitive" className="text-sm text-[var(--text-secondary)]">
               Case Sensitive
@@ -117,7 +117,7 @@ export default function WalletControls({
             {!isGeneratingVanity ? (
               <button
                 onClick={() => onStartVanity({ prefix, suffix, isCaseSensitive })}
-                className="w-full sm:flex-1 bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px]"
+                className="w-full sm:flex-1 bg-zinc-500 hover:bg-zinc-600 text-white font-medium px-6 py-2.5 rounded-[1px] transition-colors text-center cursor-pointer min-h-[42px]"
               >
                 Start Brute Force
               </button>
@@ -143,7 +143,7 @@ export default function WalletControls({
                 <span>{progress.toLocaleString()} attempts</span>
               </div>
               <div className="w-full bg-[var(--border-color)] h-1.5 rounded-[1px] overflow-hidden">
-                <div className="bg-teal-500 h-full animate-pulse w-full" />
+                <div className="bg-zinc-500 h-full animate-pulse w-full" />
               </div>
             </div>
           )}

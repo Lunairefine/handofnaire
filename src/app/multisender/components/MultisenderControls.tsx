@@ -22,7 +22,7 @@ export default function MultisenderControls({
       <button
         onClick={onSend}
         disabled={isLoading || !hasData}
-        className="w-full md:flex-1 bg-teal-500 hover:bg-teal-600 disabled:bg-teal-500/50 disabled:cursor-not-allowed text-white font-medium px-8 py-3 rounded-[1px] transition-colors flex items-center justify-center text-base"
+        className="w-full md:flex-1 bg-zinc-500 hover:bg-zinc-600 disabled:bg-zinc-500/50 disabled:cursor-not-allowed text-white font-medium px-8 py-3 rounded-[1px] transition-colors flex items-center justify-center text-base"
       >
         {isLoading ? 'Processing...' : 'Send Transactions'}
       </button>

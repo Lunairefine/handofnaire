@@ -45,12 +45,12 @@ export default function BalanceTable({ results }: BalanceTableProps) {
                   <td className="px-6 py-4 text-[var(--text-secondary)]">{idx + 1}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <code className="bg-[var(--bg-surface)] px-2 py-1 rounded-[1px] text-teal-600 dark:text-teal-400">
+                      <code className="bg-[var(--bg-surface)] px-2 py-1 rounded-[1px] text-zinc-600 dark:text-zinc-400">
                         {truncateAddress(item.address)}
                       </code>
                       <button
                         onClick={() => copyToClipboard(item.address)}
-                        className="text-[var(--text-secondary)] hover:text-teal-500 transition-colors"
+                        className="text-[var(--text-secondary)] hover:text-zinc-500 transition-colors"
                         title="Copy Address"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>

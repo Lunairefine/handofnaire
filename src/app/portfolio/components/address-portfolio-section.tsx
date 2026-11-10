@@ -39,7 +39,7 @@ export default function AddressPortfolioSection({
               {tab.label}
               <span
                 className={`absolute inset-x-0 bottom-0 h-px transition ${
-                  isActive ? "bg-teal-500 dark:bg-teal-400" : "bg-transparent"
+                  isActive ? "bg-zinc-500 dark:bg-zinc-400" : "bg-transparent"
                 }`}
               />
             </button>

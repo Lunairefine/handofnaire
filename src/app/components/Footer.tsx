@@ -7,7 +7,7 @@ export default function Footer() {
             href={`https://github.com/Lunairefine/handofnaire/commit/${process.env.NEXT_PUBLIC_COMMIT_HASH}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] font-mono text-teal-500 hover:text-teal-400 transition-colors font-medium"
+            className="commit-hash text-[11px] font-mono text-teal-500 hover:text-teal-400 transition-colors font-medium"
           >
             {process.env.NEXT_PUBLIC_COMMIT_HASH}
           </a>

@@ -1,39 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { NETWORK_CONFIG, type Network } from '@/services/networkConfig';
 
-export const NETWORK_CONFIG = {
-  ethereum: {
-    id: 'ethereum',
-    name: 'Ethereum',
-    rpcUrl: 'https://ethereum-rpc.publicnode.com',
-    explorerUrl: 'https://etherscan.io',
-    openseaChain: 'ethereum',
-    blockscoutApiUrl: 'https://eth.blockscout.com',
-  },
-  base: {
-    id: 'base',
-    name: 'Base',
-    rpcUrl: 'https://base-rpc.publicnode.com',
-    explorerUrl: 'https://basescan.org',
-    openseaChain: 'base',
-    blockscoutApiUrl: 'https://base.blockscout.com',
-  },
-  robinhood: {
-    id: 'robinhood',
-    name: 'Robinhood',
-    rpcUrl: 'https://robinhood.api.pocket.network',
-    explorerUrl: 'https://robinhoodchain.blockscout.com',
-    openseaChain: 'robinhood',
-    blockscoutApiUrl: 'https://robinhoodchain.blockscout.com',
-  }
-} as const;
-
-export type Network = keyof typeof NETWORK_CONFIG;
+export { NETWORK_CONFIG } from '@/services/networkConfig';
+export type { Network } from '@/services/networkConfig';
 
 interface AppContextType {
-  theme: 'dark' | 'light';
-  toggleTheme: () => void;
   isScanning: boolean;
   toggleScanning: () => void;
   setIsScanning: React.Dispatch<React.SetStateAction<boolean>>;
@@ -50,7 +23,6 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppContextProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [isDesktopCollapsed, setDesktopCollapsed] = useState<boolean>(false);
@@ -58,13 +30,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
   const [activeNetwork, setActiveNetworkState] = useState<Network>('ethereum');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-    } else {
-      document.documentElement.classList.add('dark');
-    }
+    document.documentElement.classList.add('dark');
 
     const savedRpc = localStorage.getItem('customRpcUrl');
     if (savedRpc) {
@@ -76,13 +42,6 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
       setActiveNetworkState(savedNetwork);
     }
   }, []);
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    localStorage.setItem('theme', nextTheme);
-    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
-  };
 
   const toggleScanning = () => setIsScanning(prev => !prev);
 
@@ -102,7 +61,6 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 
   return (
     <AppContext.Provider value={{ 
-      theme, toggleTheme, 
       isScanning, toggleScanning, setIsScanning, 
       isMobileMenuOpen, setMobileMenuOpen,
       isDesktopCollapsed, setDesktopCollapsed,

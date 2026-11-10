@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ContractMetadata, MintTransaction } from '@/types';
-import { shortenAddress, shortenHash, getKnownContract } from '@/utils/format';
-import { ExternalLink, Compass, Zap, Copy, Check, Hash, Coins, Terminal, ChevronDown, ChevronUp } from 'lucide-react';
-import { useAppContext, NETWORK_CONFIG } from '@/app/components/AppContext';
+import { shortenAddress, shortenHash, getDefaultProfileImage, getKnownContract } from '@/utils/format';
+import { useAppContext } from '@/app/components/AppContext';
+import { NETWORK_CONFIG } from '@/services/networkConfig';
+import { ExternalLink, Copy, Check } from 'lucide-react';
+import MintPanel from './MintPanel';
 
 interface ContractDetailsProps {
   metadata: ContractMetadata | null;
@@ -22,6 +24,7 @@ export default function ContractDetails({
 
   const { activeNetwork } = useAppContext();
   const networkConfig = NETWORK_CONFIG[activeNetwork] || NETWORK_CONFIG.ethereum;
+  const chainIds: Record<string, number> = { ethereum: 1, base: 8453, optimism: 10, arbitrum: 42161, elysium: 99901, hyperevm: 999, bsc: 56, robinhood: 53935 };
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -32,7 +35,6 @@ export default function ContractDetails({
     return (
       <div className="bg-white/[0.03] border border-[var(--border-color)] p-6 rounded-[1px] h-[480px] flex flex-col items-center justify-center text-center">
         <div className="w-12 h-12 border border-dashed border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] mb-3 rounded-[1px]">
-          <Compass size={20} className="animate-pulse-slow" />
         </div>
         <p className="text-sm font-semibold text-[var(--text-primary)] font-sans uppercase tracking-wider">No Transaction Selected</p>
         <p className="text-xs text-[var(--text-secondary)] mt-2 max-w-xs font-sans">
@@ -49,6 +51,7 @@ export default function ContractDetails({
        ? 0 
        : Math.min(100, Math.max(0, (parseInt(metadata.totalSupply) / parseInt(metadata.maxSupply)) * 100)))
     : 0;
+  const previewImage = getDefaultProfileImage(selectedTx.contractAddress);
 
   return (
     <div className={`bg-white/[0.03] border border-[var(--border-color)] rounded-[1px] flex flex-col overflow-hidden transition-all duration-300 ${isOpen ? 'h-auto' : 'h-[49px]'}`}>
@@ -57,10 +60,6 @@ export default function ContractDetails({
         className="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-white/[0.03] shrink-0 cursor-pointer hover:bg-[var(--bg-main)]/50 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <div className="text-[var(--text-secondary)]">
-            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </div>
-          <Compass size={16} className="text-teal-500" />
           <h2 className="font-bold text-xs uppercase tracking-wider text-[var(--text-primary)] font-sans">
             Contract Details
           </h2>
@@ -72,13 +71,12 @@ export default function ContractDetails({
         <div className="mb-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
-              <Coins size={13} className="text-teal-500" />
               <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-sans">
                 Smart Contract Metadata
               </h3>
             </div>
             {isLoading && (
-              <span className="text-[10px] text-teal-500 font-sans animate-pulse-slow">
+              <span className="text-[10px] text-zinc-500 font-sans animate-pulse-slow">
                 Syncing RPC...
               </span>
             )}
@@ -103,15 +101,13 @@ export default function ContractDetails({
             <div className="border border-[var(--border-color)] bg-[var(--bg-main)] p-4 rounded-[1px] space-y-4">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
-                  {metadata.imageUrl && (
-                    <img 
-                      src={metadata.imageUrl} 
-                      alt={metadata.name} 
-                      className="w-10 h-10 rounded-[1px] object-cover bg-white/[0.03] border border-[var(--border-color)] shrink-0" 
-                    />
-                  )}
+                  <img
+                    src={previewImage}
+                    alt={metadata.name}
+                    className="w-10 h-10 rounded-[1px] object-cover bg-white/[0.03] border border-[var(--border-color)] shrink-0"
+                  />
                   <div>
-                    <span className="font-sans text-[9px] text-teal-500 bg-teal-500/10 px-1.5 py-0.5 rounded-[1px] font-bold uppercase border border-teal-500/20">
+                    <span className="font-sans text-[9px] text-zinc-500 bg-zinc-500/10 px-1.5 py-0.5 rounded-[1px] font-bold uppercase border border-zinc-500/20">
                       {metadata.symbol || 'NFT'}
                     </span>
                     <div className="flex items-center gap-2 mt-1.5">
@@ -120,7 +116,7 @@ export default function ContractDetails({
                         href={`https://opensea.io/assets/${networkConfig.openseaChain}/${selectedTx.contractAddress}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[var(--text-secondary)] hover:text-[#2081E2] transition-colors"
+                        className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                         title="View on OpenSea"
                       >
                         <img 
@@ -132,15 +128,6 @@ export default function ContractDetails({
                     </div>
                   </div>
                 </div>
-                <span className={`text-[9px] font-sans font-bold px-1.5 py-0.5 border rounded-[1px] uppercase ${
-                  metadata.mintStatus === 'Active'
-                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                    : metadata.mintStatus === 'Paused'
-                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-500'
-                    : 'bg-rose-500/10 border-rose-500/20 text-rose-500'
-                }`}>
-                  {metadata.mintStatus}
-                </span>
               </div>
 
               {}
@@ -153,7 +140,7 @@ export default function ContractDetails({
                 </div>
                 <div className="w-full bg-white/[0.03] h-1.5 rounded-[1px] overflow-hidden border border-[var(--border-color)]">
                   <div
-                    className="bg-teal-500 h-full rounded-[1px] transition-all duration-500"
+                    className="bg-zinc-500 h-full rounded-[1px] transition-all duration-500"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
@@ -185,7 +172,6 @@ export default function ContractDetails({
         {}
         <div className="border-t border-[var(--border-color)] pt-4 mt-2">
           <div className="flex items-center gap-1.5 mb-2.5">
-            <Hash size={13} className="text-teal-500" />
             <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider font-sans">
               Transaction Analyzer & Link Hash
             </h3>
@@ -199,7 +185,7 @@ export default function ContractDetails({
                 <span className="font-bold text-[var(--text-primary)] truncate text-right">{shortenHash(selectedTx.hash, 8)}</span>
                 <button 
                   onClick={() => handleCopy(selectedTx.hash, 'tx')}
-                  className="text-[var(--text-secondary)] hover:text-teal-500 transition-colors cursor-pointer shrink-0"
+                  className="text-[var(--text-secondary)] hover:text-zinc-500 transition-colors cursor-pointer shrink-0"
                   title="Copy Tx Hash"
                 >
                   {copiedField === 'tx' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
@@ -208,7 +194,7 @@ export default function ContractDetails({
                   href={`${networkConfig.explorerUrl}/tx/${selectedTx.hash}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
+                  className="text-zinc-500 hover:text-zinc-400 shrink-0 flex items-center gap-0.5"
                   title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
@@ -234,7 +220,7 @@ export default function ContractDetails({
                 })()}
                 <button 
                   onClick={() => handleCopy(selectedTx.to, 'to')}
-                  className="text-[var(--text-secondary)] hover:text-teal-500 transition-colors cursor-pointer shrink-0"
+                  className="text-[var(--text-secondary)] hover:text-zinc-500 transition-colors cursor-pointer shrink-0"
                   title="Copy Interacted Contract"
                 >
                   {copiedField === 'to' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
@@ -243,7 +229,7 @@ export default function ContractDetails({
                   href={`${networkConfig.explorerUrl}/address/${selectedTx.to}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
+                  className="text-zinc-500 hover:text-zinc-400 shrink-0 flex items-center gap-0.5"
                   title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
@@ -258,7 +244,7 @@ export default function ContractDetails({
                 <span className="font-bold text-[var(--text-primary)] truncate text-right">{shortenAddress(selectedTx.contractAddress, 6)}</span>
                 <button 
                   onClick={() => handleCopy(selectedTx.contractAddress, 'ca')}
-                  className="text-[var(--text-secondary)] hover:text-teal-500 transition-colors cursor-pointer shrink-0"
+                  className="text-[var(--text-secondary)] hover:text-zinc-500 transition-colors cursor-pointer shrink-0"
                   title="Copy Token CA"
                 >
                   {copiedField === 'ca' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
@@ -267,7 +253,7 @@ export default function ContractDetails({
                   href={`${networkConfig.explorerUrl}/address/${selectedTx.contractAddress}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
+                  className="text-zinc-500 hover:text-zinc-400 shrink-0 flex items-center gap-0.5"
                   title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
@@ -282,7 +268,7 @@ export default function ContractDetails({
                 <span className="font-bold text-[var(--text-primary)] truncate text-right">{shortenAddress(selectedTx.from, 6)}</span>
                 <button 
                   onClick={() => handleCopy(selectedTx.from, 'from')}
-                  className="text-[var(--text-secondary)] hover:text-teal-500 transition-colors cursor-pointer shrink-0"
+                  className="text-[var(--text-secondary)] hover:text-zinc-500 transition-colors cursor-pointer shrink-0"
                   title="Copy Sender Address"
                 >
                   {copiedField === 'from' ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
@@ -291,7 +277,7 @@ export default function ContractDetails({
                   href={`${networkConfig.explorerUrl}/address/${selectedTx.from}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-teal-500 hover:text-teal-400 shrink-0 flex items-center gap-0.5"
+                  className="text-zinc-500 hover:text-zinc-400 shrink-0 flex items-center gap-0.5"
                   title={`View on ${networkConfig.name} Explorer`}
                 >
                   <ExternalLink size={11} />
@@ -313,13 +299,22 @@ export default function ContractDetails({
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--text-secondary)]">SELECTOR:</span>
-                <span className="font-bold text-teal-500">{selectedTx.functionSelector}</span>
+                <span className="font-bold text-zinc-500">{selectedTx.functionSelector}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--text-secondary)]">BLOCK NO:</span>
                 <span className="font-bold text-[var(--text-primary)]">#{selectedTx.blockNumber}</span>
               </div>
             </div>
+
+            <MintPanel
+              key={`${selectedTx.hash}-${selectedTx.contractAddress}`}
+              selectedTx={selectedTx}
+              mintPrice={metadata?.mintPrice || selectedTx.mintPrice}
+              networkName={networkConfig.name}
+              chainId={chainIds[activeNetwork]}
+              explorerUrl={networkConfig.explorerUrl}
+            />
           </div>
         </div>
       </div>

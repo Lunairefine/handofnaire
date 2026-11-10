@@ -1,6 +1,5 @@
 "use client";
 
-import { useAppContext } from "@/app/components/AppContext";
 
 type BannerProfileDetailsProps = {
   address: string;
@@ -25,14 +24,12 @@ export default function BannerProfileDetails({
   isLoading,
   onCopy,
 }: BannerProfileDetailsProps) {
-  const { theme } = useAppContext();
-  
   let avatarSrc = ensAvatar || ensAvatarFallback;
   if (!avatarSrc && address) {
     const cleanAddress = address.toLowerCase();
     const charSum = cleanAddress.split('').reduce((sum, c) => sum + c.charCodeAt(0), 0);
     const imageIndex = (charSum % 4) + 1;
-    const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
+    const bgPrefix = 'syntaxbgwhite';
     avatarSrc = `/media/syntax/${bgPrefix}${imageIndex}.png`;
   }
   const avatarFallbackLabel = headingLabel.replace(/^0x/i, "").charAt(0).toUpperCase();
@@ -69,7 +66,7 @@ export default function BannerProfileDetails({
                   const cleanAddress = address.toLowerCase();
                   const charSum = cleanAddress.split('').reduce((sum, c) => sum + c.charCodeAt(0), 0);
                   const imageIndex = (charSum % 4) + 1;
-                  const bgPrefix = theme === 'light' ? 'syntaxbgblack' : 'syntaxbgwhite';
+                  const bgPrefix = 'syntaxbgwhite';
                   image.src = `/media/syntax/${bgPrefix}${imageIndex}.png`;
                   return;
                 }
@@ -109,7 +106,7 @@ export default function BannerProfileDetails({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={copied ? "text-teal-400" : "text-zinc-500 group-hover:text-zinc-300"}
+              className={copied ? "text-zinc-400" : "text-zinc-500 group-hover:text-zinc-300"}
             >
               {copied ? (
                 <polyline points="20 6 9 17 4 12" />
@@ -134,7 +131,7 @@ export default function BannerProfileDetails({
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-teal-500"
+                className="text-zinc-500"
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>

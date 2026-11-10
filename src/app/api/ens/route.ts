@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { type Address, createPublicClient, http, isAddress } from "viem";
+import { type Address, createPublicClient, http, isAddress, toCoinType } from "viem";
 import { mainnet } from "viem/chains";
 import { getEnsAvatar, getEnsName, getEnsText, normalize } from "viem/ens";
+import { NETWORK_CONFIG } from "@/services/networkConfig";
 
 const client = createPublicClient({
   chain: mainnet,
-  transport: http(process.env.ENS_RPC_URL || "https://eth.llamarpc.com"),
+  transport: http(NETWORK_CONFIG.ethereum.rpcUrl),
 });
 
 const buildMetadataAvatarUrl = (name: string) =>
@@ -14,6 +15,9 @@ const buildMetadataAvatarUrl = (name: string) =>
   )}`;
 
 const ENS_TIMEOUT_MS = 2500;
+
+// ENSv2 supports chain-specific primary names through ENSIP-19 coin types.
+const ENS_PRIMARY_NAME_CHAIN_IDS = [1, 42161, 8453, 59144, 10, 534352] as const;
 
 const withTimeout = async <T,>(promise: Promise<T>, timeoutMs: number) => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -55,6 +59,22 @@ const normalizeUrl = (url: string | null) => {
   return null;
 };
 
+const resolvePrimaryEnsName = async (address: Address) => {
+  const names = await Promise.all(
+    ENS_PRIMARY_NAME_CHAIN_IDS.map((chainId) =>
+      withTimeout(
+        getEnsName(client, {
+          address,
+          coinType: toCoinType(chainId),
+        }),
+        ENS_TIMEOUT_MS
+      ).catch(() => null)
+    )
+  );
+
+  return names.find((name): name is string => Boolean(name)) ?? null;
+};
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const address = searchParams.get("address");
@@ -75,10 +95,7 @@ export async function GET(request: Request) {
     const addressUrl = `${basePath}/api/v2/addresses/${address}`;
     
     const [rawEnsName, addressInfoRes] = await Promise.all([
-      withTimeout(
-        getEnsName(client, { address: address as Address }),
-        ENS_TIMEOUT_MS
-      ).catch(() => null),
+      resolvePrimaryEnsName(address as Address),
       fetch(`${addressUrl}${apiKey ? `?apikey=${apiKey}` : ""}`, { cache: "no-store" }).catch(() => null)
     ]);
 
