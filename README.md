@@ -1,22 +1,22 @@
 # Hand of Naire
 
-Hand of Naire adalah dashboard toolkit Web3 berbasis Next.js untuk memantau aktivitas blockchain, memeriksa aset, dan menjalankan operasi multi-wallet.
+Hand of Naire is a Next.js-based Web3 toolkit dashboard for monitoring blockchain activity, inspecting assets, and performing multi-wallet operations.
 
 ## Tools
 
-- **Portfolio** — melihat portfolio, saldo, token, dan riwayat aktivitas berdasarkan alamat.
-- **Wallet Generator** — membuat wallet EVM dan vanity address.
-- **Balance Checker** — memeriksa saldo banyak alamat.
-- **Multisender** — mengirim native token ke banyak alamat dengan mode one-to-many, many-to-one, dan many-to-many.
-- **RPC Scanner** — menguji endpoint RPC dan membandingkan latency/status jaringan.
-- **ERC721 Mint Scanner** — memantau event mint NFT dari log `Transfer`, ERC1155, dan `ConsecutiveTransfer`.
-- **ERC20 Mint Scanner** — memantau event `Transfer` dari zero address.
+- **Portfolio** — view portfolio balances, tokens, and address activity history.
+- **Wallet Generator** — generate EVM wallets and vanity addresses.
+- **Balance Checker** — check balances for multiple addresses.
+- **Multisender** — distribute native tokens using one-to-many, many-to-one, or many-to-many modes.
+- **RPC Scanner** — test RPC endpoints and compare network latency and status.
+- **ERC721 Mint Scanner** — monitor NFT mint events from `Transfer`, ERC1155, and `ConsecutiveTransfer` logs.
+- **ERC20 Mint Scanner** — monitor `Transfer` events originating from the zero address.
 
-OpenSea tidak ditampilkan pada menu navigasi utama.
+OpenSea is not displayed in the main navigation menu.
 
-## Jaringan
+## Supported Networks
 
-Selector jaringan utama mendukung:
+The main network selector supports:
 
 - Ethereum
 - Base
@@ -27,53 +27,53 @@ Selector jaringan utama mendukung:
 - BNB Smart Chain
 - Robinhood Chain
 
-Detail RPC, explorer, dan Blockscout dikelola di [`src/services/networkConfig.ts`](src/services/networkConfig.ts). URL RPC bukan secret dan tidak perlu disimpan di `.env`.
+RPC endpoints, explorers, and Blockscout settings are managed in [`src/services/networkConfig.ts`](src/services/networkConfig.ts). RPC URLs are public configuration values and are not stored in `.env`.
 
-## Prasyarat
+## Requirements
 
-- Node.js 20 atau lebih baru
+- Node.js 20 or later
 - npm
 
-## Menjalankan secara lokal
+## Local Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Environment variables
+## Environment Variables
 
-Environment variable hanya diperlukan untuk konfigurasi yang bersifat rahasia atau deployment-specific. Buat file `.env.local` jika diperlukan:
+Environment variables are only needed for secrets or deployment-specific settings. Create a `.env.local` file when needed:
 
 ```env
 OPENSEA_API_KEY=your_opensea_api_key
 ```
 
-RPC jaringan tidak dikonfigurasi melalui environment variable. Untuk mengganti endpoint RPC, edit `NETWORK_CONFIG` pada `src/services/networkConfig.ts`.
+RPC endpoints are not configured through environment variables. To change an endpoint, edit `NETWORK_CONFIG` in `src/services/networkConfig.ts`.
 
-## Perintah yang tersedia
+## Available Commands
 
 ```bash
-npm run dev      # menjalankan development server
-npm run build    # membuat production build
-npm run start    # menjalankan production server
-npm run lint     # menjalankan ESLint
+npm run dev      # start the development server
+npm run build    # create a production build
+npm run start    # start the production server
+npm run lint     # run ESLint
 ```
 
-## Struktur penting
+## Project Structure
 
 ```text
-src/app/                 halaman dan komponen Next.js
-src/hooks/               scanner dan state logic
-src/services/            konfigurasi jaringan, RPC, dan explorer
-src/lib/                 chain clients dan utilitas transaksi
-src/parser/              parser ABI dan fungsi mint
+src/app/                 Next.js pages and components
+src/hooks/               scanner and state logic
+src/services/            network, RPC, and explorer configuration
+src/lib/                 chain clients and transaction utilities
+src/parser/              ABI and mint-function parsers
 ```
 
-## Catatan keamanan
+## Security Notes
 
-- Gunakan burner wallet untuk multisender.
-- Jangan memasukkan private key ke repository atau membagikannya.
-- Transaksi blockchain tidak dapat dibatalkan setelah dikirim.
+- Use burner wallets with the multisender tool.
+- Never commit or share private keys.
+- Blockchain transactions cannot be reversed after submission.
